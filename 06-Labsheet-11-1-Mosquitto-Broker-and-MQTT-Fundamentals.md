@@ -147,30 +147,30 @@ mosquitto -c ~/mqtt_lab/mosquitto.conf -v
 1. ปิด Subscriber ในเทอร์มินัลที่ 2 ทั้งหมด (ไม่มีใคร Subscribe อยู่)
 2. ใน **เทอร์มินัลที่ 3** ส่งข้อความธรรมดา (ไม่ใส่พารามิเตอร์ `-r`):
    ```powershell
-   mosquitto_pub -h 127.0.0.1 -t "sensor/state" -m "Normal"
+   & "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -t "sensor/state" -m "Normal"
    ```
 3. เปิด Subscriber ใน **เทอร์มินัลที่ 2**:
    ```powershell
-   mosquitto_sub -h 127.0.0.1 -t "sensor/state" -v
+   & "C:\Program Files\mosquitto\mosquitto_sub.exe" -h 127.0.0.1 -t "sensor/state" -v
    ```
    *ผลที่ได้*: หน้าจอว่างเปล่า ไม่ได้รับข้อความใดๆ เพราะข้อความถูกส่งผ่านไปแล้วก่อนหน้านี้
 
 4. ใน **เทอร์มินัลที่ 3** สั่ง Publish โดยเพิ่มพารามิเตอร์ **`-r` (Retain)**:
    ```powershell
-   mosquitto_pub -h 127.0.0.1 -t "sensor/state" -m "CRITICAL_ALERT" -r
+   & "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -t "sensor/state" -m "CRITICAL_ALERT" -r
    ```
    *ผลที่ได้*: ในเทอร์มินัลที่ 2 ได้รับข้อความ `sensor/state CRITICAL_ALERT` ทันที
 
 5. ปิดเทอร์มินัลที่ 2 (`Ctrl + C`) แล้วเปิดใหม่อีกครั้ง:
    ```powershell
-   mosquitto_sub -h 127.0.0.1 -t "sensor/state" -v
+   & "C:\Program Files\mosquitto\mosquitto_sub.exe" -h 127.0.0.1 -t "sensor/state" -v
    ```
    *ผลที่ได้*: ทันทีที่เชื่อมต่อสำเร็จ เทอร์มินัลที่ 2 จะได้รับข้อความ `CRITICAL_ALERT` ในทันที แม้ Publisher จะไม่ได้ส่งข้อความใหม่เลยก็ตาม
 
 > [!TIP]
 > **วิธีลบ Retained Message ออกจาก Broker**: ส่งข้อความที่มีเนื้อหาว่างเปล่า (Empty Payload) พร้อมเปิดแฟล็ก `-r`:
 > ```powershell
-> mosquitto_pub -h 127.0.0.1 -t "sensor/state" -n -r
+> & "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -t "sensor/state" -n -r
 > ```
 
 ---
@@ -179,14 +179,14 @@ mosquitto -c ~/mqtt_lab/mosquitto.conf -v
 
 1. ใน **เทอร์มินัลที่ 2** เปิด Subscribe เพื่อรอเฝ้าดูสถานะของโหนด:
    ```powershell
-   mosquitto_sub -h 127.0.0.1 -t "node/esp32/status" -v
+   & "C:\Program Files\mosquitto\mosquitto_sub.exe" -h 127.0.0.1 -t "node/esp32/status" -v
    ```
 2. ใน **เทอร์มินัลที่ 3** เปิด Client ที่จำลองเป็น ESP32 โดยกำหนดค่า **LWT** ไว้ล่วงหน้า:
    ```powershell
-   mosquitto_sub -h 127.0.0.1 -i "Node_Client_01" -t "dummy/listen" --will-topic "node/esp32/status" --will-payload "LOST_CONNECTION_OFFLINE" --will-qos 1
+   & "C:\Program Files\mosquitto\mosquitto_sub.exe" -h 127.0.0.1 -i "Node_Client_01" -t "dummy/listen" --will-topic "node/esp32/status" --will-payload "LOST_CONNECTION_OFFLINE" --will-qos 1
    ```
 3. ส่งสถานะเริ่มต้นว่า "ONLINE" จากอุปกรณ์:
-   (เปิดเทอร์มินัลที่ 4 แล้วพิมพ์ `mosquitto_pub -h 127.0.0.1 -t "node/esp32/status" -m "ONLINE"`)
+   (เปิดเทอร์มินัลที่ 4 แล้วพิมพ์ `& "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -t "node/esp32/status" -m "ONLINE"`)
    *สังเกตผล*: เทอร์มินัลที่ 2 แสดงสถานะ `ONLINE`
 4. **จำลองเหตุการณ์ไฟดับหรือเครือข่ายหลุดกะทันหัน**:  
    ในเทอร์มินัลที่ 3 ให้ทำการ **บังคับปิดหน้าต่างเทอร์มินัลทันที** หรือกดปิดโปรเซส เพื่อไม่ให้ Client ส่งแพ็กเก็ต `DISCONNECT`
