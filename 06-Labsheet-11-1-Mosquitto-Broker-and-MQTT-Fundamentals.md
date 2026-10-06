@@ -77,26 +77,26 @@ mosquitto -c ~/mqtt_lab/mosquitto.conf -v
 #### 1. การ Subscribe หัวข้อเฉพาะเจาะจง
 เปิด **เทอร์มินัลที่ 2** เพื่อจำลองเป็นอุปกรณ์ Subscriber สังเกตการณ์:
 ```powershell
-mosquitto_sub -h 127.0.0.1 -p 1883 -t "home/livingroom/light" -v
+& "C:\Program Files\mosquitto\mosquitto_sub.exe" -h 127.0.0.1 -p 1883 -t "home/livingroom/light" -v
 ```
 
 เปิด **เทอร์มินัลที่ 3** เพื่อจำลองเป็น Publisher ส่งข้อความสั่งงาน:
 ```powershell
-mosquitto_pub -h 127.0.0.1 -p 1883 -t "home/livingroom/light" -m "ON"
+& "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -p 1883 -t "home/livingroom/light" -m "ON"
 ```
 *สังเกตผล*: ในเทอร์มินัลที่ 2 จะได้รับข้อความ `home/livingroom/light ON` ทันที
 
 #### 2. การทดสอบไวลด์การ์ดระดับเดียว (Single-Level Wildcard: `+`)
 ใน **เทอร์มินัลที่ 2** กด `Ctrl + C` แล้วเปลี่ยนคำสั่ง Subscribe เป็น:
 ```powershell
-mosquitto_sub -h 127.0.0.1 -p 1883 -t "home/+/light" -v
+& "C:\Program Files\mosquitto\mosquitto_sub.exe" -h 127.0.0.1 -p 1883 -t "home/+/light" -v
 ```
 
 ใน **เทอร์มินัลที่ 3** ทดลอง Publish ข้อความ 3 ครั้ง:
 ```powershell
-mosquitto_pub -h 127.0.0.1 -p 1883 -t "home/livingroom/light" -m "ON"
-mosquitto_pub -h 127.0.0.1 -p 1883 -t "home/kitchen/light" -m "OFF"
-mosquitto_pub -h 127.0.0.1 -p 1883 -t "home/bedroom/balcony/light" -m "ON"
+& "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -p 1883 -t "home/livingroom/light" -m "ON"
+& "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -p 1883 -t "home/kitchen/light" -m "OFF"
+& "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -p 1883 -t "home/bedroom/balcony/light" -m "ON"
 ```
 
 > [!NOTE]
@@ -105,13 +105,13 @@ mosquitto_pub -h 127.0.0.1 -p 1883 -t "home/bedroom/balcony/light" -m "ON"
 #### 3. การทดสอบไวลด์การ์ดหลายระดับ (Multi-Level Wildcard: `#`)
 ใน **เทอร์มินัลที่ 2** เปลี่ยนคำสั่ง Subscribe เป็น:
 ```powershell
-mosquitto_sub -h 127.0.0.1 -p 1883 -t "home/#" -v
+& "C:\Program Files\mosquitto\mosquitto_sub.exe" -h 127.0.0.1 -p 1883 -t "home/#" -v
 ```
 
 ใน **เทอร์มินัลที่ 3** ทดลอง Publish ข้อความไปยังหัวข้อต่างๆ:
 ```powershell
-mosquitto_pub -h 127.0.0.1 -p 1883 -t "home/livingroom/temp" -m "26.4"
-mosquitto_pub -h 127.0.0.1 -p 1883 -t "home/bedroom/balcony/light" -m "ON"
+& "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -p 1883 -t "home/livingroom/temp" -m "26.4"
+& "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -p 1883 -t "home/bedroom/balcony/light" -m "ON"
 ```
 *สังเกตผล*: ทุกข้อความที่ขึ้นต้นด้วย `home/` จะถูกส่งมาแสดงผลทั้งหมด
 
@@ -122,18 +122,18 @@ mosquitto_pub -h 127.0.0.1 -p 1883 -t "home/bedroom/balcony/light" -m "ON"
 ในกิจกรรมนี้ ให้สังเกตข้อความ Log ใน **เทอร์มินัลที่ 1 (Broker)** ควบคู่กับคำสั่งในเทอร์มินัลที่ 2 และ 3:
 
 #### 1. ทดสอบ QoS 0 (At Most Once)
-* ในเทอร์มินัล 2: `mosquitto_sub -h 127.0.0.1 -t "test/qos" -q 0 -v`
-* ในเทอร์มินัล 3: `mosquitto_pub -h 127.0.0.1 -t "test/qos" -m "QoS 0 Message" -q 0`
+* ในเทอร์มินัล 2: `& "C:\Program Files\mosquitto\mosquitto_sub.exe" -h 127.0.0.1 -t "test/qos" -q 0 -v`
+* ในเทอร์มินัล 3: `& "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -t "test/qos" -m "QoS 0 Message" -q 0`
 * *สังเกต Log ฝั่ง Broker*: มีเพียงแพ็กเก็ต `PUBLISH` ส่งผ่านไปโดยไม่มีแพ็กเก็ตตอบรับใดๆ
 
 #### 2. ทดสอบ QoS 1 (At Least Once)
-* ในเทอร์มินัล 2: `mosquitto_sub -h 127.0.0.1 -t "test/qos" -q 1 -v`
-* ในเทอร์มินัล 3: `mosquitto_pub -h 127.0.0.1 -t "test/qos" -m "QoS 1 Message" -q 1`
+* ในเทอร์มินัล 2: `& "C:\Program Files\mosquitto\mosquitto_sub.exe" -h 127.0.0.1 -t "test/qos" -q 1 -v`
+* ในเทอร์มินัล 3: `& "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -t "test/qos" -m "QoS 1 Message" -q 1`
 * *สังเกต Log ฝั่ง Broker*: จะปรากฏแพ็กเก็ต `PUBLISH (d0, q1, m1, ...)` ตามด้วยแพ็กเก็ต `PUBACK (Mid: 1)` เพื่อยืนยันการรับส่งข้อมูล
 
 #### 3. ทดสอบ QoS 2 (Exactly Once)
-* ในเทอร์มินัล 2: `mosquitto_sub -h 127.0.0.1 -t "test/qos" -q 2 -v`
-* ในเทอร์มินัล 3: `mosquitto_pub -h 127.0.0.1 -t "test/qos" -m "QoS 2 Message" -q 2`
+* ในเทอร์มินัล 2: `& "C:\Program Files\mosquitto\mosquitto_sub.exe" -h 127.0.0.1 -t "test/qos" -q 2 -v`
+* ในเทอร์มินัล 3: `& "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -t "test/qos" -m "QoS 2 Message" -q 2`
 * *สังเกต Log ฝั่ง Broker*: จะปรากฏกระบวนการ 4-way Handshake อย่างชัดเจน:
   1. `Received PUBLISH ... q2`
   2. `Sending PUBREC`
