@@ -28,7 +28,7 @@
 
 ## 3. ขั้นตอนการทดลอง (Deconstructed Activities)
 
-### กิจกรรมที่ 11-4.1: การสร้างโปรเจกต์และติดตั้ง Dependency `esp-rainmaker`
+### กิจกรรมที่ 11-4.1 การสร้างโปรเจกต์และติดตั้ง Dependency `esp-rainmaker`
 
 #### 1. สร้างโปรเจกต์ใหม่
 ```powershell
@@ -38,12 +38,12 @@ idf.py set-target esp32c3   # หรือ esp32
 ```
 
 #### 2. ติดตั้ง ESP RainMaker Component จาก IDF Component Registry
-เพิ่มไลบรารีทางการของ Espressif ผ่านคำสั่ง:
+เพิ่มไลบรารีทางการของ Espressif ผ่านคำสั่ง
 ```powershell
 idf.py add-dependency "espressif/esp-rainmaker"
 ```
 
-ไฟล์ `main/idf_component.yml` จะได้รับการสร้างและอัปเดตโดยอัตโนมัติ:
+ไฟล์ `main/idf_component.yml` จะได้รับการสร้างและอัปเดตโดยอัตโนมัติ
 ```yaml
 dependencies:
   idf:
@@ -54,9 +54,9 @@ dependencies:
 
 ---
 
-### กิจกรรมที่ 11-4.2: การเขียนโค้ดเฟิร์มแวร์อุปกรณ์ (`main/main.c`)
+### กิจกรรมที่ 11-4.2 การเขียนโค้ดเฟิร์มแวร์อุปกรณ์ (`main/main.c`)
 
-เปิดไฟล์ `main/main.c` และแทนที่ด้วยโค้ดสมบูรณ์ต่อไปนี้:
+เปิดไฟล์ `main/main.c` และแทนที่ด้วยโค้ดสมบูรณ์ต่อไปนี้
 
 ```c
 #include <stdio.h>
@@ -83,7 +83,7 @@ static const char *TAG = "RMAKER_LIGHT";
 static esp_rmaker_device_t *s_light_device = NULL;
 
 /* ========================================================
- * 1. Write Callback: ฟังก์ชันรับคำสั่งควบคุมจากคลาวด์
+ * 1. Write Callback ฟังก์ชันรับคำสั่งควบคุมจากคลาวด์
  * ======================================================== */
 static esp_err_t write_cb(const esp_rmaker_device_t *device, const esp_rmaker_param_t *param,
                           const esp_rmaker_param_val_t val, void *priv_data, esp_rmaker_write_ctx_t *ctx)
@@ -153,7 +153,7 @@ void app_main(void)
     // ผูก Callback สำหรับรับคำสั่ง
     esp_rmaker_device_add_cb(s_light_device, write_cb, NULL);
 
-    // 4. เพิ่ม Parameter: Brightness (ความสว่างเริ่มต้น 100%)
+    // 4. เพิ่ม Parameter Brightness (ความสว่างเริ่มต้น 100%)
     esp_rmaker_param_t *brightness_param = esp_rmaker_brightness_param_create(ESP_RMAKER_DEF_BRIGHTNESS_NAME, 100);
     esp_rmaker_device_add_param(s_light_device, brightness_param);
 
@@ -174,21 +174,21 @@ void app_main(void)
 
 ---
 
-### กิจกรรมที่ 11-4.3: การคอมไพล์ แฟลช และสังเกตการสร้าง QR Code
+### กิจกรรมที่ 11-4.3 การคอมไพล์ แฟลช และสังเกตการสร้าง QR Code
 
-สั่งคอมไพล์และแฟลชโปรแกรม:
+สั่งคอมไพล์และแฟลชโปรแกรม
 ```powershell
 idf.py build
 idf.py -p COMx flash monitor
 ```
 
-**ผลลัพธ์ใน Serial Monitor**:
+**ผลลัพธ์ใน Serial Monitor**
 * บอร์ดจะพิมพ์ **QR Code ในรูปแบบตัวอักษร ASCII** ออกมาทางหน้าจอ พร้อม URL สำหรับเปิดดูรูปภาพ QR Code
 * บอร์ดจะเริ่มประกาศสัญญาณบลูทูธ (BLE Advertising) เพื่อรอรับการเชื่อมต่อ
 
 ---
 
-### กิจกรรมที่ 11-4.4: การเชื่อมต่อผ่านแอปพลิเคชัน ESP RainMaker บนมือถือ
+### กิจกรรมที่ 11-4.4 การเชื่อมต่อผ่านแอปพลิเคชัน ESP RainMaker บนมือถือ
 
 <p align="center">
   <img src="Images/image13.png" width="280">
@@ -199,32 +199,32 @@ idf.py -p COMx flash monitor
 </p>
 <p align="center"><b>รูปที่ 11.13</b> ขั้นตอนการเปิดใช้งาน Assisted Claiming และการจับคู่อุปกรณ์บนโทรศัพท์มือถือ</p>
 
-1. **เข้าสู่ระบบ**: เปิดแอปพลิเคชัน **ESP RainMaker** บนโทรศัพท์มือถือ เข้าสู่ระบบด้วยบัญชีที่ลงทะเบียนไว้
-2. **เพิ่มอุปกรณ์**: กดปุ่มเครื่องหมายบวก (`+ Add Device`) บนหน้าจอแอป
-3. **สแกน QR Code**: นำกล้องสมาร์ตโฟนสแกน QR Code ที่ปรากฏบน Serial Monitor
-4. **กระบวนการ Assisted Claiming**:
+1. **เข้าสู่ระบบ** เปิดแอปพลิเคชัน **ESP RainMaker** บนโทรศัพท์มือถือ เข้าสู่ระบบด้วยบัญชีที่ลงทะเบียนไว้
+2. **เพิ่มอุปกรณ์** กดปุ่มเครื่องหมายบวก (`+ Add Device`) บนหน้าจอแอป
+3. **สแกน QR Code** นำกล้องสมาร์ตโฟนสแกน QR Code ที่ปรากฏบน Serial Monitor
+4. **กระบวนการ Assisted Claiming**
    * หากบอร์ดยังไม่มีใบรับรอง แอปจะขึ้นหน้าต่างยืนยันการขอรับ Certificate ให้กดปุ่มยืนยัน
    * แอปจะดึงใบรับรองจาก RainMaker Cloud แล้วส่งให้ ESP32 ผ่านช่องทาง BLE
-5. **กรอกรหัส Wi-Fi**: เลือกชื่อ SSID เครือข่าย Wi-Fi 2.4 GHz ในบ้านและกรอกรหัสผ่าน
-6. **เสร็จสิ้นการผูกอุปกรณ์**: บอร์ดจะเชื่อมต่อ Wi-Fi และผูกตัวเองเข้ากับบัญชีผู้ใช้ แอปจะแสดงการ์ด **"Living Room Light"** ขึ้นมาบนหน้าจอ
+5. **กรอกรหัส Wi-Fi** เลือกชื่อ SSID เครือข่าย Wi-Fi 2.4 GHz ในบ้านและกรอกรหัสผ่าน
+6. **เสร็จสิ้นการผูกอุปกรณ์** บอร์ดจะเชื่อมต่อ Wi-Fi และผูกตัวเองเข้ากับบัญชีผู้ใช้ แอปจะแสดงการ์ด **"Living Room Light"** ขึ้นมาบนหน้าจอ
 
 ---
 
 ## 4. การทดสอบและการตรวจสอบผลลัพธ์ (Testing & Verification)
 
 ### 1. การควบคุมเปิด-ปิดผ่าน Mobile App
-* กดสวิตช์ Power บนหน้าจอแอป: สังเกตว่าหลอดไฟ LED บนบอร์ดเปิดและปิดทันทีตามการสั่งการ
-* ทดลองเลื่อนแถบสไลเดอร์ Brightness: สังเกตข้อความ Log บน Serial Monitor ว่าได้รับค่าความสว่างใหม่กี่เปอร์เซ็นต์
+* กดสวิตช์ Power บนหน้าจอแอป สังเกตว่าหลอดไฟ LED บนบอร์ดเปิดและปิดทันทีตามการสั่งการ
+* ทดลองเลื่อนแถบสไลเดอร์ Brightness สังเกตข้อความ Log บน Serial Monitor ว่าได้รับค่าความสว่างใหม่กี่เปอร์เซ็นต์
 
 ### 2. การควบคุมระยะไกลข้ามอินเทอร์เน็ต (Remote 4G/5G Test)
 * **ปิดสัญญาณ Wi-Fi บนสมาร์ตโฟน** แล้วเปิดใช้งานเฉพาะ **สัญญาณอินเทอร์เน็ตมือถือ (4G/5G)**
-* กดสั่งเปิด-ปิดหลอดไฟอีกครั้ง: สังเกตว่าบอร์ด ESP32 ที่บ้านยังคงตอบสนองต่อคำสั่งได้อย่างรวดเร็ว แสดงถึงพลังของสถาปัตยกรรม Cloud Control
+* กดสั่งเปิด-ปิดหลอดไฟอีกครั้ง สังเกตว่าบอร์ด ESP32 ที่บ้านยังคงตอบสนองต่อคำสั่งได้อย่างรวดเร็ว แสดงถึงพลังของสถาปัตยกรรม Cloud Control
 
 ---
 
 ### 3. (ทางเลือกขั้นสูง) การทดสอบผ่าน RainMaker CLI บนคอมพิวเตอร์
 
-เปิดเทอร์มินัลใหม่บนคอมพิวเตอร์:
+เปิดเทอร์มินัลใหม่บนคอมพิวเตอร์
 
 ```powershell
 # ติดตั้งเครื่องมือ CLI

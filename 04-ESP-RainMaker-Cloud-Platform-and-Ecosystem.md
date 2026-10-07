@@ -14,20 +14,20 @@
 <p align="center"><b>รูปที่ 11.6</b> สถาปัตยกรรมของเฟรมเวิร์ก ESP RainMaker (ESP RainMaker Framework)</p>
 
 ### องค์ประกอบหลัก 4 ส่วนของ ESP RainMaker
-1. **Device Firmware (ESP-IDF + RainMaker SDK)**:  
+1. **Device Firmware (ESP-IDF + RainMaker SDK)**  
    เฟิร์มแวร์ที่ทำงานบนชิป ESP32/ESP32-C3 ทำหน้าที่ควบคุมฮาร์ดแวร์ จัดการ Wi-Fi Provisioning ผ่าน BLE และสื่อสารกับคลาวด์ผ่าน MQTTS
-2. **Cloud Backend (Serverless Architecture on AWS)**:  
+2. **Cloud Backend (Serverless Architecture on AWS)**  
    ระบบคลาวด์เบื้องหลังสร้างขึ้นบนโครงสร้างพื้นฐานระดับโลกของ **Amazon Web Services (AWS)** โดยใช้ AWS IoT Core เป็นตัวกลางกระจายข้อความ MQTT, AWS Cognito จัดการระบบสมาชิก, AWS DynamoDB เก็บฐานข้อมูล และ AWS Lambda จัดการตรรกะแบบ Serverless
-3. **Phone Application (ESP RainMaker Mobile App)**:  
+3. **Phone Application (ESP RainMaker Mobile App)**  
    แอปพลิเคชันบน iOS และ Android สำหรับผู้ใช้งานทั่วไป ใช้ค้นหาอุปกรณ์ผ่านบลูทูธ (BLE), ส่งรหัส Wi-Fi (Provisioning), ผูกอุปกรณ์เข้ากับบัญชีตนเอง และควบคุมเปิด-ปิดหรือปรับค่าต่างๆ ผ่านหน้าจอแบบ Dynamic UI
-4. **Command Line Interface (ESP RainMaker CLI)**:  
+4. **Command Line Interface (ESP RainMaker CLI)**  
    เครื่องมือแบบบรรทัดคำสั่ง (Python CLI) สำหรับนักพัฒนาในการดีบัก ดึงสถานะอุปกรณ์ ส่งคำสั่งควบคุม และบริหารจัดการผู้ใช้งาน
 
 ---
 
-## 11.4.2 แบบจำลองข้อมูลอุปกรณ์ (Data Model: Node, Device, Param, Service)
+## 11.4.2 แบบจำลองข้อมูลอุปกรณ์ (Data Model Node, Device, Param, Service)
 
-ESP RainMaker ออกแบบโครงสร้างข้อมูลของอุปกรณ์แบบเป็นลำดับชั้น (Hierarchical Data Model) ซึ่งมีความยืดหยุ่นสูงมาก:
+ESP RainMaker ออกแบบโครงสร้างข้อมูลของอุปกรณ์แบบเป็นลำดับชั้น (Hierarchical Data Model) ซึ่งมีความยืดหยุ่นสูงมาก
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────────┐
@@ -51,13 +51,13 @@ ESP RainMaker ออกแบบโครงสร้างข้อมูลข
 └──────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-1. **Node (โหนด)**:  
+1. **Node (โหนด)**  
    คือตัวแทนของไมโครคอนโทรลเลอร์ ESP32 หนึ่งตัว ซึ่งจะได้รับหมายเลขระบุตัวตนเฉพาะ (**Node ID**) จากคลาวด์ บอร์ดหนึ่งตัวถือเป็นหนึ่ง Node
-2. **Device (อุปกรณ์)**:  
+2. **Device (อุปกรณ์)**  
    คือฟังก์ชันการทำงานทางตรรกะของเครื่องใช้ไฟฟ้า เช่น หลอดไฟ พัดลม สวิตช์ หรือเซนเซอร์ โดยหนึ่ง Node สามารถประกอบด้วยหลาย Device ได้ (เช่น บอร์ดเดียวคุมหลอดไฟ 2 ดวงและพัดลม 1 ตัว)
-3. **Parameter (พารามิเตอร์)**:  
+3. **Parameter (พารามิเตอร์)**  
    คือคุณลักษณะหรือสถานะย่อยของ Device ที่สามารถอ่านหรือเขียนค่าได้ เช่น สถานะเปิด/ปิด (Power), ความสว่าง (Brightness), สี (Hue/Saturation), หรือค่าอุณหภูมิ (Temperature)
-4. **Service (บริการส่วนกลาง)**:  
+4. **Service (บริการส่วนกลาง)**  
    คือฟังก์ชันการทำงานระดับระบบที่ไม่ผูกติดกับ Device ใด Device หนึ่ง เช่น บริการซิงก์เวลาโลก (Time Service), การอัปเดตเฟิร์มแวร์ (OTA Service) และการตั้งเวลาทำงานล่วงหน้า (Schedule Service)
 
 ---
@@ -72,11 +72,11 @@ ESP RainMaker ออกแบบโครงสร้างข้อมูลข
 <p align="center"><b>รูปที่ 11.7</b> กระบวนการ Assisted Claiming ของ ESP32-C3 (ESP32-C3 Assisted Claiming)</p>
 
 ### วิธีการ Claiming ของ ESP RainMaker
-1. **Assisted Claiming (การเคลมผ่านสมาร์ตโฟน)**:  
+1. **Assisted Claiming (การเคลมผ่านสมาร์ตโฟน)**  
    เหมาะอย่างยิ่งสำหรับขั้นตอนการเรียนรู้และการพัฒนาผลิตภัณฑ์ต้นแบบ บอร์ด ESP32 ไม่จำเป็นต้องมีใบรับรองฝังมาล่วงหน้า ในระหว่างที่ผู้ใช้เปิดแอปมือถือเพื่อเชื่อมต่อ Wi-Fi แอปบนสมาร์ตโฟนจะติดต่อกับ RainMaker Cloud เพื่อขอรับ Certificate ชั่วคราว จากนั้นจะส่งต่อ Certificate ผ่านท่อบลูทูธ (BLE) ไปให้บอร์ด ESP32 บันทึกลงในหน่วยความจำ NVS Flash โดยอัตโนมัติ
-2. **Self Claiming**:  
+2. **Self Claiming**  
    บอร์ด ESP32 ที่เชื่อมต่ออินเทอร์เน็ตได้แล้วจะทำการร้องขอ Certificate จาก Claiming Server ของ Espressif โดยตรง
-3. **Host-driven Claiming (Factory Claiming)**:  
+3. **Host-driven Claiming (Factory Claiming)**  
    นำไปใช้ในสายการผลิตจริง โดยฝ่ายผลิตจะสร้าง Certificate แล้วเบิร์นลงในพาร์ติชันพิเศษชื่อ `fctry` บน Flash Memory ของแต่ละชิปตั้งแต่ขั้นตอนการผลิต
 
 <p align="center">
@@ -90,7 +90,7 @@ ESP RainMaker ออกแบบโครงสร้างข้อมูลข
 
 ## 11.4.4 การสื่อสารผ่านเครื่องมือ ESP RainMaker CLI (`rainmaker.py`)
 
-Espressif มีเครื่องมือ CLI ในภาษา Python สำหรับการทดสอบและสั่งการคลาวด์โดยไม่ต้องเปิดแอปมือถือ:
+Espressif มีเครื่องมือ CLI ในภาษา Python สำหรับการทดสอบและสั่งการคลาวด์โดยไม่ต้องเปิดแอปมือถือ
 
 ### 1. การติดตั้งเครื่องมือ CLI
 ```bash
@@ -122,10 +122,10 @@ rainmaker.py login
 
 ## 11.4.5 การพัฒนาตัวอย่าง Smart Light บน ESP-IDF
 
-ด้านล่างนี้คือโครงสร้างโค้ดเฟิร์มแวร์มาตรฐานสำหรับการสร้างอุปกรณ์หลอดไฟอัจฉริยะ (Smart Light) ด้วย **ESP RainMaker SDK**:
+ด้านล่างนี้คือโครงสร้างโค้ดเฟิร์มแวร์มาตรฐานสำหรับการสร้างอุปกรณ์หลอดไฟอัจฉริยะ (Smart Light) ด้วย **ESP RainMaker SDK**
 
 ### 1. การสร้าง Write Callback รับคำสั่งจากคลาวด์
-เมื่อผู้ใช้กดเปลี่ยนสถานะในแอปหรือส่งคำสั่งผ่านคลาวด์ ฟังก์ชัน Callback นี้จะถูกเรียกทำงาน:
+เมื่อผู้ใช้กดเปลี่ยนสถานะในแอปหรือส่งคำสั่งผ่านคลาวด์ ฟังก์ชัน Callback นี้จะถูกเรียกทำงาน
 
 ```c
 #include "esp_rmaker_core.h"
@@ -185,7 +185,7 @@ void app_main(void)
     esp_rmaker_device_t *light_device = esp_rmaker_lightbulb_device_create("Ceiling Light", NULL, false);
     esp_rmaker_device_add_cb(light_device, write_cb, NULL);
 
-    // 4. เพิ่ม Parameter มาตรฐาน: Brightness, Hue, Saturation
+    // 4. เพิ่ม Parameter มาตรฐาน  Brightness, Hue, Saturation
     esp_rmaker_device_add_param(light_device, esp_rmaker_brightness_param_create(ESP_RMAKER_DEF_BRIGHTNESS_NAME, 100));
     esp_rmaker_device_add_param(light_device, esp_rmaker_hue_param_create(ESP_RMAKER_DEF_HUE_NAME, 0));
     esp_rmaker_device_add_param(light_device, esp_rmaker_saturation_param_create(ESP_RMAKER_DEF_SATURATION_NAME, 100));
@@ -193,7 +193,7 @@ void app_main(void)
     // 5. บรรจุ Device เข้าสู่ Node
     esp_rmaker_node_add_device(node, light_device);
 
-    // 6. เปิดบริการระบบ: Time Service, Schedule, และ OTA
+    // 6. เปิดบริการระบบ Time Service, Schedule, และ OTA
     esp_rmaker_timezone_service_enable();
     esp_rmaker_schedule_enable();
     esp_rmaker_ota_config_t ota_config = {
@@ -225,21 +225,21 @@ void app_main(void)
   <b>รูปที่ 11.10</b> หน้าจอ Assisted Claiming, การส่งรหัส Wi-Fi และการผูกบัญชีอุปกรณ์บน ESP RainMaker App
 </p>
 
-1. **สแกน QR Code**: ผู้ใช้เปิดแอป ESP RainMaker บนสมาร์ตโฟน กดปุ่มเพิ่มอุปกรณ์ (+) แล้วสแกนรหัส QR Code ที่พิมพ์ออกมาทาง Serial Monitor
-2. **Assisted Claiming**: แอปมือถือจะตรวจพบว่าบอร์ดเป็นอุปกรณ์ใหม่ จึงเชื่อมต่อกับ RainMaker Cloud เพื่อสร้างและส่งใบรับรองความปลอดภัยลงสู่บอร์ดผ่าน BLE
-3. **ส่งข้อมูล Wi-Fi**: ผู้ใช้เลือกชื่อ Wi-Fi ในบ้านและกรอกรหัสผ่าน แอปส่งข้อมูลไปยัง ESP32
-4. **Cloud Association**: บอร์ดเชื่อมต่อเราเตอร์และวิ่งขึ้นสู่คลาวด์ พร้อมส่งสัญญาณยืนยันการผูกบัญชีสำเร็จ หน้าจอแอปจะปรากฏการ์ดควบคุมหลอดไฟขึ้นมาทันที
+1. **สแกน QR Code** ผู้ใช้เปิดแอป ESP RainMaker บนสมาร์ตโฟน กดปุ่มเพิ่มอุปกรณ์ (+) แล้วสแกนรหัส QR Code ที่พิมพ์ออกมาทาง Serial Monitor
+2. **Assisted Claiming** แอปมือถือจะตรวจพบว่าบอร์ดเป็นอุปกรณ์ใหม่ จึงเชื่อมต่อกับ RainMaker Cloud เพื่อสร้างและส่งใบรับรองความปลอดภัยลงสู่บอร์ดผ่าน BLE
+3. **ส่งข้อมูล Wi-Fi** ผู้ใช้เลือกชื่อ Wi-Fi ในบ้านและกรอกรหัสผ่าน แอปส่งข้อมูลไปยัง ESP32
+4. **Cloud Association** บอร์ดเชื่อมต่อเราเตอร์และวิ่งขึ้นสู่คลาวด์ พร้อมส่งสัญญาณยืนยันการผูกบัญชีสำเร็จ หน้าจอแอปจะปรากฏการ์ดควบคุมหลอดไฟขึ้นมาทันที
 
 ---
 
 ## 11.4.7 การปรับแต่ง Dynamic UI และการเชื่อมโยงระบบสั่งงานด้วยเสียงภายนอก
 
 ### 1. ชนิดอุปกรณ์และวิดเจ็ตแสดงผลมาตรฐาน (Standard UI Types)
-RainMaker App มีระบบสร้างหน้าจอแบบ **Dynamic UI** โดยคลาวด์จะส่ง Metadata บอกแอปว่าควรแสดงผลวิดเจ็ตแบบใดตามประเภทของ Parameter:
-* `esp.ui.toggle`: แสดงผลเป็นสวิตช์เปิด-ปิด
-* `esp.ui.slider`: แสดงผลเป็นแถบเลื่อนความสว่าง หรืออุณหภูมิ
-* `esp.ui.hue-slider`: แสดงผลเป็นวงล้อหรือแถบเลือกเฉดสี (Color Spectrum)
-* `esp.ui.dropdown`: แสดงผลเป็นรายการตัวเลือก (เช่น ความเร็วพัดลม: Low, Med, High)
+RainMaker App มีระบบสร้างหน้าจอแบบ **Dynamic UI** โดยคลาวด์จะส่ง Metadata บอกแอปว่าควรแสดงผลวิดเจ็ตแบบใดตามประเภทของ Parameter
+* `esp.ui.toggle` แสดงผลเป็นสวิตช์เปิด-ปิด
+* `esp.ui.slider` แสดงผลเป็นแถบเลื่อนความสว่าง หรืออุณหภูมิ
+* `esp.ui.hue-slider` แสดงผลเป็นวงล้อหรือแถบเลือกเฉดสี (Color Spectrum)
+* `esp.ui.dropdown` แสดงผลเป็นรายการตัวเลือก (เช่น ความเร็วพัดลม Low, Med, High)
 
 <p align="center">
   <img src="Images/image16.png" width="60"> &nbsp;
@@ -249,13 +249,13 @@ RainMaker App มีระบบสร้างหน้าจอแบบ **Dyn
   <img src="Images/image20.png" width="60"> &nbsp;
   <img src="Images/image22.png" width="60">
 </p>
-<p align="center"><b>รูปที่ 11.11</b> ไอคอนอุปกรณ์มาตรฐาน: หลอดไฟ, สวิตช์, ปลั๊กไฟ, พัดลม, เซนเซอร์, และเครื่องปรับอากาศ</p>
+<p align="center"><b>รูปที่ 11.11</b> ไอคอนอุปกรณ์มาตรฐาน หลอดไฟ, สวิตช์, ปลั๊กไฟ, พัดลม, เซนเซอร์, และเครื่องปรับอากาศ</p>
 
 ---
 
 ### 2. การเชื่อมโยง Amazon Alexa และ Google Home
 
-จุดเด่นที่สุดอย่างหนึ่งของ ESP RainMaker คือการมี **Cloud-to-Cloud Integration** เข้ากับระบบ Smart Home ชั้นนำระดับโลกไว้แล้วล่วงหน้า:
+จุดเด่นที่สุดอย่างหนึ่งของ ESP RainMaker คือการมี **Cloud-to-Cloud Integration** เข้ากับระบบ Smart Home ชั้นนำระดับโลกไว้แล้วล่วงหน้า
 * ผู้ใช้สามารถเปิดแอป **Amazon Alexa** หรือ **Google Home**
 * ค้นหาบริการ Skill / Action ชื่อ **"ESP RainMaker"**
 * ล็อกอินด้วยบัญชี ESP RainMaker บัญชีเดียวกัน
@@ -268,7 +268,7 @@ RainMaker App มีระบบสร้างหน้าจอแบบ **Dyn
 </p>
 <p align="center"><b>รูปที่ 11.12</b> การควบคุมอุปกรณ์ ESP RainMaker ผ่าน Amazon Alexa และ Google Home</p>
 
-ผู้ใช้สามารถสั่งงานด้วยเสียงภาษาไทยหรือภาษาอังกฤษได้ทันที เช่น:
+ผู้ใช้สามารถสั่งงานด้วยเสียงภาษาไทยหรือภาษาอังกฤษได้ทันที เช่น
 * *"Hey Google, turn on the ceiling light"*
 * *"Alexa, set the light brightness to 50 percent"*
 

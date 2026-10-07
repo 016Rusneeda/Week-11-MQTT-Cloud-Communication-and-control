@@ -28,7 +28,7 @@
 ### กิจกรรมที่ 11-3.1 การสร้างคู่กุญแจและใบรับรองดิจิทัลด้วย OpenSSL
 
 > [!TIP]
-> สำหรับนักศึกษาที่ต้องการศึกษาพื้นฐานความปลอดภัยไซเบอร์, ระบบคู่กุญแจ (Key-Pair), X.509 Certificates และรายละเอียดของแต่ละคำสั่ง OpenSSL สามารถศึกษาเพิ่มเติมได้ที่ **[ภาคผนวกที่ 2: พื้นฐานความปลอดภัยไซเบอร์, กลไกคู่กุญแจ และการใช้งาน OpenSSL สำหรับ IoT](10-Appendix-2-OpenSSL-and-Keys-pair.md)**
+> สำหรับนักศึกษาที่ต้องการศึกษาพื้นฐานความปลอดภัยไซเบอร์, ระบบคู่กุญแจ (Key-Pair), X.509 Certificates และรายละเอียดของแต่ละคำสั่ง OpenSSL สามารถศึกษาเพิ่มเติมได้ที่ **[ภาคผนวกที่ 2 พื้นฐานความปลอดภัยไซเบอร์, กลไกคู่กุญแจ และการใช้งาน OpenSSL สำหรับ IoT](10-Appendix-2-OpenSSL-and-Keys-pair.md)**
 
 สร้างโฟลเดอร์สำหรับเก็บใบรับรอง เช่น `C:\mqtt_certs\` (หรือ `~/mqtt_certs/`) แล้วเปิดหน้าต่าง Terminal ในโฟลเดอร์ดังกล่าว
 
@@ -73,7 +73,7 @@ openssl x509 -req -in client.csr -out client.crt -sha256 -CA ca.crt -CAkey ca.ke
 
 ---
 
-### กิจกรรมที่ 11-3.2: การตั้งค่า Mosquitto MQTTS Broker (Port 8883)
+### กิจกรรมที่ 11-3.2 การตั้งค่า Mosquitto MQTTS Broker (Port 8883)
 
 สร้างไฟล์คอนฟิก `mosquitto_ssl.conf` ในโฟลเดอร์ `C:\mqtt_certs\`:
 
@@ -96,39 +96,39 @@ tls_version tlsv1.2
 log_type all
 ```
 
-สั่งรัน Mosquitto ใน **เทอร์มินัลที่ 1**:
+สั่งรัน Mosquitto ใน **เทอร์มินัลที่ 1**
 ```powershell
 & "C:\Program Files\mosquitto\mosquitto.exe" -c "C:\mqtt_certs\mosquitto_ssl.conf" -v
 ```
 
 ---
 
-### กิจกรรมที่ 11-3.3: การทดสอบความปลอดภัยผ่านเครื่องมือ CLI
+### กิจกรรมที่ 11-3.3 การทดสอบความปลอดภัยผ่านเครื่องมือ CLI
 
 #### 1. การทดสอบแบบถูกต้อง (ส่งทั้ง ca.crt, client.crt, client.key)
-เปิด **เทอร์มินัลที่ 2** แล้วสั่ง Subscribe:
+เปิด **เทอร์มินัลที่ 2** แล้วสั่ง Subscribe
 ```powershell
 mosquitto_sub -h 192.168.1.100 -p 8883 -t "secure/test" --cafile ca.crt --cert client.crt --key client.key -v
 ```
-เปิด **เทอร์มินัลที่ 3** แล้วสั่ง Publish:
+เปิด **เทอร์มินัลที่ 3** แล้วสั่ง Publish
 ```powershell
 mosquitto_pub -h 192.168.1.100 -p 8883 -t "secure/test" -m "Hello Secure World!" --cafile ca.crt --cert client.crt --key client.key
 ```
-*สังเกตผล*: ในเทอร์มินัลที่ 2 จะได้รับข้อความสำเร็จ และใน Broker Log จะแสดงกระบวนการจับมือ TLS สำเร็จ
+*สังเกตผล* ในเทอร์มินัลที่ 2 จะได้รับข้อความสำเร็จ และใน Broker Log จะแสดงกระบวนการจับมือ TLS สำเร็จ
 
 #### 2. การทดสอบการปฏิเสธผู้บุกรุก (Unauthorized Client Attack)
-ทดลองใช้ `mosquitto_pub` ส่งข้อความ **โดยไม่ส่งใบรับรอง Client** (ส่งเฉพาะ cafile):
+ทดลองใช้ `mosquitto_pub` ส่งข้อความ **โดยไม่ส่งใบรับรอง Client** (ส่งเฉพาะ cafile)
 ```powershell
 mosquitto_pub -h 192.168.1.100 -p 8883 -t "secure/test" -m "Hacker message" --cafile ca.crt
 ```
-**ผลลัพธ์ที่คาดหวัง**:
+**ผลลัพธ์ที่คาดหวัง**
 * ในเทอร์มินัลจะแจ้งเตือนข้อผิดพลาด: `Error: Connection refused: Not authorised` หรือ `OpenSSL Error: ssl handshake failure`
 * ในหน้าต่าง Broker Log จะแจ้ง: `Client disconnected due to TLS error: peer did not return a certificate`
 * แสดงว่าระบบปฏิเสธการเชื่อมต่อจากอุปกรณ์แปลกปลอมได้อย่างสมบูรณ์
 
 ---
 
-### กิจกรรมที่ 11-3.4: การสร้างโปรเจกต์ ESP-IDF และการฝัง Certificate ผ่าน CMake
+### กิจกรรมที่ 11-3.4 การสร้างโปรเจกต์ ESP-IDF และการฝัง Certificate ผ่าน CMake
 
 #### 1. สร้างโปรเจกต์ใหม่
 ```powershell
@@ -138,13 +138,13 @@ idf.py set-target esp32c3   # หรือ esp32
 ```
 
 #### 2. การคัดลอกไฟล์ใบรับรองเข้าสู่โฟลเดอร์ `main/certs/`
-สร้างโฟลเดอร์ `main/certs/` แล้วคัดลอกไฟล์ 3 ไฟล์จากโฟลเดอร์ `C:\mqtt_certs\` มาใส่:
+สร้างโฟลเดอร์ `main/certs/` แล้วคัดลอกไฟล์ 3 ไฟล์จากโฟลเดอร์ `C:\mqtt_certs\` มาใส่
 1. `ca.crt` (ใบรับรอง Root CA)
 2. `client.crt` (ใบรับรองของ ESP32)
 3. `client.key` (กุญแจส่วนตัวของ ESP32)
 
 #### 3. การแก้ไขไฟล์ `main/CMakeLists.txt`
-เปิดไฟล์ `main/CMakeLists.txt` แล้วเพิ่มคำสั่ง `EMBED_TXTFILES`:
+เปิดไฟล์ `main/CMakeLists.txt` แล้วเพิ่มคำสั่ง `EMBED_TXTFILES`
 
 ```cmake
 idf_component_register(
@@ -159,9 +159,9 @@ idf_component_register(
 
 ---
 
-### กิจกรรมที่ 11-3.5: การเขียนโค้ดโปรแกรมหลัก (`main/main.c`)
+### กิจกรรมที่ 11-3.5 การเขียนโค้ดโปรแกรมหลัก (`main/main.c`)
 
-เปิดไฟล์ `main/main.c` และบันทึกโค้ดต่อไปนี้:
+เปิดไฟล์ `main/main.c` และบันทึกโค้ดต่อไปนี้
 
 ```c
 #include <stdio.h>
@@ -315,16 +315,16 @@ void app_main(void)
 
 ## 4. การทดสอบและการตรวจสอบผลลัพธ์ (Testing & Verification)
 
-1. แฟลชโปรแกรมลงบนบอร์ด ESP32:
+1. แฟลชโปรแกรมลงบนบอร์ด ESP32
    ```powershell
    idf.py -p COMx flash monitor
    ```
-2. สังเกตผลในหน้าต่าง Serial Monitor:
+2. สังเกตผลในหน้าต่าง Serial Monitor
    * บอร์ดเชื่อมต่อ Wi-Fi สำเร็จ
-   * เริ่มกระบวนการจับมือ TLS: `Connecting to 192.168.1.100:8883...`
-   * หน้าจอรายงาน: `MQTTS TLS Handshake Successful! Connected to Secure Broker.`
-3. สังเกตหน้าต่าง Broker Log:
-   * Mosquitto จะพิมพ์ข้อความยืนยัน: `Peer certificate verified: /C=TH/ST=Bangkok/O=IoT Node/CN=esp32-secure-node`
+   * เริ่มกระบวนการจับมือ TLS `Connecting to 192.168.1.100:8883...`
+   * หน้าจอรายงาน `MQTTS TLS Handshake Successful! Connected to Secure Broker.`
+3. สังเกตหน้าต่าง Broker Log
+   * Mosquitto จะพิมพ์ข้อความยืนยัน `Peer certificate verified: /C=TH/ST=Bangkok/O=IoT Node/CN=esp32-secure-node`
    * แสดงว่า Broker ได้ทำการตรวจความถูกต้องของใบรับรองบอร์ด ESP32 ผ่านเรียบร้อยแล้ว
 
 ---

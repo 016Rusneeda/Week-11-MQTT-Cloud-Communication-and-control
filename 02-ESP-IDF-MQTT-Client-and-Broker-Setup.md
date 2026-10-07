@@ -25,7 +25,7 @@
 
 ### 1. การติดตั้งบนระบบปฏิบัติการ Linux (Ubuntu / Debian / Raspberry Pi OS)
 
-สามารถติดตั้งผ่าน Package Manager ได้โดยตรง:
+สามารถติดตั้งผ่าน Package Manager ได้โดยตรง
 
 ```bash
 # อัปเดตแพ็กเกจระบบและติดตั้ง Mosquitto พร้อมเครื่องมือ CLI
@@ -36,7 +36,7 @@ sudo apt install -y mosquitto mosquitto-clients
 mosquitto -h
 ```
 
-หรือคอมไพล์จาก Source Code ตามหนังสือ ESP32-C3 Wireless Adventure:
+หรือคอมไพล์จาก Source Code ตามหนังสือ ESP32-C3 Wireless Adventure
 ```bash
 # ดาวน์โหลด Source code จาก mosquitto.org
 wget https://mosquitto.org/files/source/mosquitto-2.0.12.tar.gz
@@ -58,9 +58,9 @@ sudo make install
 
 ### 3. การสร้างไฟล์คอนฟิกูเรชัน (`mosquitto.conf`)
 
-ตั้งแต่ Mosquitto เวอร์ชัน 2.0 เป็นต้นไป มีการปรับเปลี่ยนนโยบายความปลอดภัยเริ่มต้น โดย Broker จะรับการเชื่อมต่อเฉพาะจากเครื่อง `localhost` เท่านั้น และไม่อนุญาตการเชื่อมต่อแบบไม่ระบุตัวตน (Anonymous) ดังนั้น เพื่อให้บอร์ด ESP32 ในวงแลนสามารถเชื่อมต่อเข้ามาได้ เราจำเป็นต้องสร้างไฟล์คอนฟิกูเรชันเฉพาะ:
+ตั้งแต่ Mosquitto เวอร์ชัน 2.0 เป็นต้นไป มีการปรับเปลี่ยนนโยบายความปลอดภัยเริ่มต้น โดย Broker จะรับการเชื่อมต่อเฉพาะจากเครื่อง `localhost` เท่านั้น และไม่อนุญาตการเชื่อมต่อแบบไม่ระบุตัวตน (Anonymous) ดังนั้น เพื่อให้บอร์ด ESP32 ในวงแลนสามารถเชื่อมต่อเข้ามาได้ เราจำเป็นต้องสร้างไฟล์คอนฟิกูเรชันเฉพาะ
 
-สร้างไฟล์ชื่อ `mosquitto.conf` โดยมีเนื้อหาดังนี้:
+สร้างไฟล์ชื่อ `mosquitto.conf` โดยมีเนื้อหาดังนี้
 
 ```text
 # กำหนดพอร์ตสำหรับฟังการเชื่อมต่อแบบไม่เข้ารหัส
@@ -78,7 +78,7 @@ log_type information
 
 ### 4. การเปิดใช้งาน Broker ในโหมด Verbose (แสดงประวัติการทำงาน)
 
-เปิดหน้าต่างเทอร์มินัลใหม่ แล้วรันคำสั่ง:
+เปิดหน้าต่างเทอร์มินัลใหม่ แล้วรันคำสั่ง
 
 ```powershell
 # บน Windows
@@ -95,45 +95,45 @@ mosquitto -c mosquitto.conf -v
 
 ## 11.2.2 การทดสอบ Broker ด้วยเครื่องมือ CLI (`mosquitto_sub` & `mosquitto_pub`)
 
-Mosquitto มาพร้อมกับเครื่องมือบรรทัดคำสั่ง (CLI) 2 ตัวที่ทรงพลังมากสำหรับการตรวจสอบระบบ:
+Mosquitto มาพร้อมกับเครื่องมือบรรทัดคำสั่ง (CLI) 2 ตัวที่ทรงพลังมากสำหรับการตรวจสอบระบบ
 
 ### 1. เครื่องมือบอกรับข้อมูล (`mosquitto_sub`)
-เปิดเทอร์มินัลที่ 1 เพื่อรอรับข้อความในหัวข้อ `iot/device/+/status`:
+เปิดเทอร์มินัลที่ 1 เพื่อรอรับข้อความในหัวข้อ `iot/device/+/status`
 ```powershell
 # บน Windows / Linux
 mosquitto_sub -h 127.0.0.1 -p 1883 -t "iot/device/+/status" -v
 ```
 
 ### 2. เครื่องมือเผยแพร่ข้อมูล (`mosquitto_pub`)
-เปิดเทอร์มินัลที่ 2 เพื่อส่งข้อความ:
+เปิดเทอร์มินัลที่ 2 เพื่อส่งข้อความ
 ```powershell
 # ส่งข้อความทดสอบที่ระดับ QoS 1
 mosquitto_pub -h 127.0.0.1 -p 1883 -t "iot/device/esp32_01/status" -m "{\"temperature\": 28.5, \"led\": true}" -q 1
 ```
 
-ผลลัพธ์ในเทอร์มินัลที่ 1 จะปรากฏข้อความ:
+ผลลัพธ์ในเทอร์มินัลที่ 1 จะปรากฏข้อความ
 ```text
 iot/device/esp32_01/status {"temperature": 28.5, "led": true}
 ```
 
 #### สรุปพารามิเตอร์ CLI สำคัญ
 
-| พารามิเตอร์ | ความหมาย | ตัวอย่างการใช้งาน |
-| :--- | :--- | :--- |
-| `-h` | Broker Hostname หรือ IP Address | `-h 192.168.1.100` |
-| `-p` | Network Port | `-p 1883` หรือ `-p 8883` (TLS) |
-| `-t` | Topic หรือ Topic Filter | `-t "sensors/temperature"` |
-| `-m` | Message Payload (ข้อความที่จะส่ง) | `-m "ON"` |
-| `-q` | Quality of Service (0, 1 หรือ 2) | `-q 1` |
-| `-r` | Retain Message (ให้ Broker เก็บข้อความไว้) | `-r` |
-| `-v` | Verbose (แสดงชื่อ Topic พร้อมกับข้อความ) | `-v` |
-| `-u`, `-P` | Username และ Password | `-u admin -P secret123` |
+| พารามิเตอร์ | ความหมาย                                   | ตัวอย่างการใช้งาน              |
+| :---------- | :----------------------------------------- | :----------------------------- |
+| `-h`        | Broker Hostname หรือ IP Address            | `-h 192.168.1.100`             |
+| `-p`        | Network Port                               | `-p 1883` หรือ `-p 8883` (TLS) |
+| `-t`        | Topic หรือ Topic Filter                    | `-t "sensors/temperature"`     |
+| `-m`        | Message Payload (ข้อความที่จะส่ง)          | `-m "ON"`                      |
+| `-q`        | Quality of Service (0, 1 หรือ 2)           | `-q 1`                         |
+| `-r`        | Retain Message (ให้ Broker เก็บข้อความไว้) | `-r`                           |
+| `-v`        | Verbose (แสดงชื่อ Topic พร้อมกับข้อความ)   | `-v`                           |
+| `-u`, `-P`  | Username และ Password                      | `-u admin -P secret123`        |
 
 ---
 
 ## 11.2.3 โครงสร้างคอมโพเนนต์ `esp-mqtt` ใน ESP-IDF
 
-เฟรมเวิร์ก ESP-IDF มีคอมโพเนนต์สำหรับ MQTT ไคลเอนต์ทางการชื่อ **`esp-mqtt`** (Header file: `mqtt_client.h`) ซึ่งพัฒนาขึ้นบนสแตก LwIP TCP/IP และ FreeRTOS มีจุดเด่นคือ:
+เฟรมเวิร์ก ESP-IDF มีคอมโพเนนต์สำหรับ MQTT ไคลเอนต์ทางการชื่อ **`esp-mqtt`** (Header file: `mqtt_client.h`) ซึ่งพัฒนาขึ้นบนสแตก LwIP TCP/IP และ FreeRTOS มีจุดเด่นคือ
 * รองรับโปรโตคอล MQTT v3.1.1 และ v5.0
 * รองรับการเชื่อมต่อผ่าน TCP ปกติ (`mqtt://`), TLS เข้ารหัส (`mqtts://`), และ WebSocket (`ws://`, `wss://`)
 * มีระบบจัดการ Reconnection อัตโนมัติเมื่อสัญญาณ Wi-Fi ขาดหาย
@@ -141,7 +141,7 @@ iot/device/esp32_01/status {"temperature": 28.5, "led": true}
 
 ### โครงสร้างการตั้งค่า (`esp_mqtt_client_config_t`)
 
-ใน ESP-IDF v5.x และ v6.x มีการจัดหมวดหมู่คอนฟิกูเรชันเป็นกลุ่มโครงสร้างย่อย:
+ใน ESP-IDF v5.x และ v6.x มีการจัดหมวดหมู่คอนฟิกูเรชันเป็นกลุ่มโครงสร้างย่อย
 
 ```c
 #include "mqtt_client.h"
@@ -176,7 +176,7 @@ esp_mqtt_client_config_t mqtt_cfg = {
 
 ## 11.2.4 วงจรชีวิตและ State Machine ของ ESP-IDF MQTT Client
 
-`esp-mqtt` ทำงานด้วยสถาปัตยกรรม **Event Loop (ESP Event System)** โดยจะแจ้งเหตุการณ์การเปลี่ยนแปลงสถานะของเครือข่ายเข้ามายังฟังก์ชัน Event Handler:
+`esp-mqtt` ทำงานด้วยสถาปัตยกรรม **Event Loop (ESP Event System)** โดยจะแจ้งเหตุการณ์การเปลี่ยนแปลงสถานะของเครือข่ายเข้ามายังฟังก์ชัน Event Handler
 
 ```mermaid
 stateDiagram-v2
@@ -195,15 +195,15 @@ stateDiagram-v2
 
 ### รายการ Event Types ที่สำคัญ (`esp_mqtt_event_id_t`)
 
-| ค่า Event ID | คำอธิบายสถานะและการปฏิบัติงานที่แนะนำ |
-| :--- | :--- |
-| **`MQTT_EVENT_CONNECTED`** | เชื่อมต่อ Broker สำเร็จ ขั้นตอนนี้แนะนำให้ทำการ **Subscribe** หัวข้อคำสั่งที่ต้องการรับฟังทันที และ Publish สถานะออนไลน์ (`status = "online"`) |
-| **`MQTT_EVENT_DISCONNECTED`** | การเชื่อมต่อกับ Broker ขาดหาย ไคลเอนต์จะพยายามเชื่อมต่อใหม่ให้อัตโนมัติในเบื้องหลัง |
-| **`MQTT_EVENT_SUBSCRIBED`** | Broker ยืนยันการบอกรับหัวข้อสำเร็จ (ได้รับ `SUBACK`) สามารถดึงค่า `event->msg_id` ตรวจสอบได้ |
-| **`MQTT_EVENT_UNSUBSCRIBED`** | ยกเลิกการบอกรับหัวข้อสำเร็จ |
-| **`MQTT_EVENT_PUBLISHED`** | ส่งข้อมูลสำเร็จ (สำหรับ QoS 1 และ 2 เมื่อได้รับ ACK จาก Broker) |
-| **`MQTT_EVENT_DATA`** | **ได้รับข้อความข้อมูลใหม่จาก Broker** ข้อมูลหัวข้ออยู่ที่ `event->topic` (ยาว `event->topic_len`) และข้อมูลเนื้อหาอยู่ที่ `event->data` (ยาว `event->data_len`) |
-| **`MQTT_EVENT_ERROR`** | เกิดข้อผิดพลาดในระดับ Socket หรือโปรโตคอล TLS |
+| ค่า Event ID                  | คำอธิบายสถานะและการปฏิบัติงานที่แนะนำ                                                                                                                           |
+| :---------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`MQTT_EVENT_CONNECTED`**    | เชื่อมต่อ Broker สำเร็จ ขั้นตอนนี้แนะนำให้ทำการ **Subscribe** หัวข้อคำสั่งที่ต้องการรับฟังทันที และ Publish สถานะออนไลน์ (`status = "online"`)                  |
+| **`MQTT_EVENT_DISCONNECTED`** | การเชื่อมต่อกับ Broker ขาดหาย ไคลเอนต์จะพยายามเชื่อมต่อใหม่ให้อัตโนมัติในเบื้องหลัง                                                                             |
+| **`MQTT_EVENT_SUBSCRIBED`**   | Broker ยืนยันการบอกรับหัวข้อสำเร็จ (ได้รับ `SUBACK`) สามารถดึงค่า `event->msg_id` ตรวจสอบได้                                                                    |
+| **`MQTT_EVENT_UNSUBSCRIBED`** | ยกเลิกการบอกรับหัวข้อสำเร็จ                                                                                                                                     |
+| **`MQTT_EVENT_PUBLISHED`**    | ส่งข้อมูลสำเร็จ (สำหรับ QoS 1 และ 2 เมื่อได้รับ ACK จาก Broker)                                                                                                 |
+| **`MQTT_EVENT_DATA`**         | **ได้รับข้อความข้อมูลใหม่จาก Broker** ข้อมูลหัวข้ออยู่ที่ `event->topic` (ยาว `event->topic_len`) และข้อมูลเนื้อหาอยู่ที่ `event->data` (ยาว `event->data_len`) |
+| **`MQTT_EVENT_ERROR`**        | เกิดข้อผิดพลาดในระดับ Socket หรือโปรโตคอล TLS                                                                                                                   |
 
 > [!CAUTION]
 > สตริงใน `event->topic` และ `event->data` **ไม่ได้ลงท้ายด้วย Null-terminator (`'\0'`)** เสมอไป ดังนั้นห้ามใช้ฟังก์ชัน `printf("%s", event->data)` หรือ `strcmp()` ตรงๆ โดยเด็ดขาด มิฉะนั้นอาจเกิดปัญหา Memory Buffer Overflow ได้ ควรใช้การจองบัฟเฟอร์แล้วคัดลอกด้วย `memcpy()` พร้อมเติม `'\0'` ปิดท้าย หรือใช้ฟอร์แมต `printf("%.*s", event->data_len, event->data)`
@@ -212,12 +212,12 @@ stateDiagram-v2
 
 ## 11.2.5 ตัวอย่างการพัฒนาโค้ด ESP-IDF MQTT Client
 
-ด้านล่างนี้คือตัวอย่างโค้ดมาตรฐานในการสร้างระบบรับส่งข้อความแบบครบวงจร:
+ด้านล่างนี้คือตัวอย่างโค้ดมาตรฐานในการสร้างระบบรับส่งข้อความแบบครบวงจร
 1. เชื่อมต่อ MQTT Broker ผ่านพอร์ต 1883
 2. จัดการ Event Loop รับคำสั่งควบคุมเปิด-ปิด LED
 3. สร้าง FreeRTOS Task เพื่อส่งข้อมูล Telemetry จำลองเป็น JSON ทุกๆ 5 วินาที
 
-### โค้ดส่วนที่ 1: การจัดการ Event Handler
+### โค้ดส่วนที่ 1 การจัดการ Event Handler
 
 ```c
 #include <stdio.h>
@@ -282,7 +282,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
 }
 ```
 
-### โค้ดส่วนที่ 2: FreeRTOS Task ส่งข้อมูล Telemetry (JSON Payload)
+### โค้ดส่วนที่ 2 FreeRTOS Task ส่งข้อมูล Telemetry (JSON Payload)
 
 ```c
 static void telemetry_task(void *pvParameters)
@@ -318,7 +318,7 @@ static void telemetry_task(void *pvParameters)
 }
 ```
 
-### โค้ดส่วนที่ 3: ฟังก์ชันเริ่มต้นระบบ (App Main)
+### โค้ดส่วนที่ 3 ฟังก์ชันเริ่มต้นระบบ (App Main)
 
 ```c
 void app_main(void)
@@ -360,7 +360,7 @@ void app_main(void)
 
 ---
 
-## 11.2.7 สถาปัตยกรรมก้าวหน้า: Kestrel ในฐานะ All-in-One Multi-Protocol Bridge
+## 11.2.7 สถาปัตยกรรมก้าวหน้า Kestrel ในฐานะ All-in-One Multi-Protocol Bridge
 
 แม้ว่าในบทนี้เราจะใช้ **Eclipse Mosquitto** เป็น Broker แบบ Standalone ตามหนังสืออ้างอิง แต่ในโลกของ **Industrial IoT Edge Gateway ยุคใหม่** มีแนวคิดที่กำลังได้รับความนิยมอย่างสูง คือการรวมศูนย์บริการทั้งหมดไว้ใน **Process เดียวกัน (Single Executable)** ผ่าน **Kestrel Web Server (.NET 8)** ที่นักศึกษาได้เรียนรู้ในสัปดาห์ที่ 8
 
@@ -377,11 +377,11 @@ void app_main(void)
 ```
 
 ### ทำไม Kestrel จึงเป็นทางเลือกที่ยอดเยี่ยมสำหรับ Local MQTT Gateway?
-1. **ไม่ต้องติดตั้งโปรแกรมคนกลางหลายตัว**: แทนที่จะต้องเปิดทั้ง Mosquitto + Web Server + Background Script เพื่อเชื่อมต่อข้อมูล เราสามารถรันเพียงไฟล์ `.exe` หรือไฟล์ไบนารีเดียวของ Kestrel
-2. **In-Memory Zero Latency**: เมื่อ ESP32 ส่งข้อมูลเซนเซอร์ผ่าน MQTT เข้ามา ข้อมูลจะอยู่ในหน่วยความจำเดียวกันทันที สามารถสตรีมต่อไปยังหน้าจอ SVG Dashboard (จากสัปดาห์ที่ 8) ได้ในระดับไมโครวินาที
-3. **ความปลอดภัยระดับ Enterprise**: สามารถใช้ระบบ Authentication, X.509 TLS, และ Middleware ของ ASP.NET Core ควบคุมสิทธิ์การส่ง MQTT ได้อย่างครอบคลุม
+1. **ไม่ต้องติดตั้งโปรแกรมคนกลางหลายตัว** แทนที่จะต้องเปิดทั้ง Mosquitto + Web Server + Background Script เพื่อเชื่อมต่อข้อมูล เราสามารถรันเพียงไฟล์ `.exe` หรือไฟล์ไบนารีเดียวของ Kestrel
+2. **In-Memory Zero Latency** เมื่อ ESP32 ส่งข้อมูลเซนเซอร์ผ่าน MQTT เข้ามา ข้อมูลจะอยู่ในหน่วยความจำเดียวกันทันที สามารถสตรีมต่อไปยังหน้าจอ SVG Dashboard (จากสัปดาห์ที่ 8) ได้ในระดับไมโครวินาที
+3. **ความปลอดภัยระดับ Enterprise** สามารถใช้ระบบ Authentication, X.509 TLS, และ Middleware ของ ASP.NET Core ควบคุมสิทธิ์การส่ง MQTT ได้อย่างครอบคลุม
 
-*(หมายเหตุ: สถาปัตยกรรมการรวมศูนย์ Kestrel Multi-Protocol Bridge นี้ จะได้รับการนำมาปฏิบัติการจริงใน **สัปดาห์ที่ 13** ซึ่งเป็นสัปดาห์สุดท้ายของการประมวลผลความรู้ทั้งระบบ)*
+*(หมายเหตุ สถาปัตยกรรมการรวมศูนย์ Kestrel Multi-Protocol Bridge นี้ จะได้รับการนำมาปฏิบัติการจริงใน **สัปดาห์ที่ 13** ซึ่งเป็นสัปดาห์สุดท้ายของการประมวลผลความรู้ทั้งระบบ)*
 
 ---
 
