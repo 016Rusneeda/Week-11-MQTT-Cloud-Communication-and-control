@@ -118,7 +118,7 @@ sequenceDiagram
 * **Digital Signature** ลายมือชื่อดิจิทัลของผู้ออกบัตร ซึ่งกำกับไว้เพื่อป้องกันการปลอมแปลง
 
 <p align = "center">
-<img src="images/A2-5-X.509.svg">
+<img src="Images/A2-5-X.509.svg">
 </p>
 
 <p align = "center">
@@ -171,7 +171,7 @@ graph TD
 ## 5. คู่มือคำสั่ง OpenSSL ฉบับวิศวกร IoT (Step-by-Step Command Deep Dive)
 
 ในกิจกรรมของ **ใบงานที่ 11.3** เราได้ใช้ชุดคำสั่ง OpenSSL ในการจัดทำระบบรักษาความปลอดภัย หัวข้อนี้จะชำแหละและอธิบายความหมายของแต่ละพารามิเตอร์อย่างละเอียด
-<p align = "center"><img src="images/A2-6.svg"></p>
+<p align = "center"><img src="Images/A2-6.svg"></p>
 
 <p align = "center"> <b>ภาพที่ 2.6</b> ภาพรวมกระบวนการสร้างใบรับรอง </p>
 
@@ -295,10 +295,10 @@ openssl rsa -noout -modulus -in server.key | openssl md5
 ## 7. ความแตกต่างระหว่าง One-Way TLS และ Mutual TLS (mTLS)
 
 
-<p align = "center"><img src="images/A2-7a.svg"></p>
+<p align = "center"><img src="Images/A2-7a.svg"></p>
 
 <p align = "center"> (a) One-Way TLS </p>
-<p align = "center"><img src="images/A2-7b.svg"></p>
+<p align = "center"><img src="Images/A2-7b.svg"></p>
 <p align = "center"> (b) Two-Way TLS </p>
 <p align = "center"> <b>ภาพที่ 2.7</b> One-Way  และ Two-Way TLS </p>
 
