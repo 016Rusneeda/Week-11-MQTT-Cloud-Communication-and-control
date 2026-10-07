@@ -38,7 +38,7 @@
 
 ---
 
-## 3. ขั้นตอนการทดลอง (Deconstructed Activities)
+## 3. ขั้นตอนการทดลอง
 
 ### กิจกรรมที่ 11-1.1: การติดตั้งและเริ่มต้น Mosquitto Broker
 
@@ -47,7 +47,7 @@
 
 ให้จดบันทึกไว้ด้วยว่า installer ติดตั้งไว้ที่ folder ใด 
 เนื่องจากใน Lab จะมีการเรียกใช้โปรแกรมผ่าน `&` ซึ่งเป็น **Call Operator** ใน PowerShell ดังนั้นหากติดตั้งที่อื่น หรือใช้ชื่ออื่น ต้องแก้ไขคำสั่งในใบงานให้ถูกต้อง
-> ในใบงานนี้ ใช้ค่า default คือ `"C:\Program Files\mosquitto\mosquitto.exe"`
+> ในใบงานนี้ ใช้ค่า default คือ `"C:\Program Files\mosquitto\mosquitto.exe"` หรือเรียกโดยไม่ต้องใส่ path เป็น `mosquitto.exe` ก็ได้
 
 
 * **สำหรับ Linux (Ubuntu/Debian)**
@@ -108,11 +108,28 @@ log_type all
 
 ```powershell
 # บน Windows (ระบุ Path ไฟล์คอนฟิกที่สร้างไว้)
-& "C:\Program Files\mosquitto\mosquitto.exe" -c "C:\mqtt_lab\mosquitto.conf" -v
+& mosquitto.exe -c "C:\mqtt_lab\mosquitto.conf" -v
 
 # บน Linux
 mosquitto -c ~/mqtt_lab/mosquitto.conf -v
 ```
+
+**หมายเหตุ** 
+1. ถ้ารัน mosquitto.exe บนวินโดวส์ไม่ได้ ให้ตรวจสอบ path ในตัวแปรระบบ โดยเพิ่มเส้นทางการค้นหา "c:\Program Files\Mosquitto\" เข้าไป แล้วเรียก Powershell ใหม่อีกครั้ง 
+2. `C:\mqtt_lab\mosquitto.conf` คือไฟล์ที่เก็บ configuration ของ mqtt broker ให้ใส่เส้นทางที่อยู่ของไฟล์จริง ๆ 
+
+> [!WARNING] **ข้อควรระวังสำคัญมากสำหรับ Windows (ปัญหา Mosquitto Service ซ้ำซ้อน / Split-Brain Broker)**
+> ตัวติดตั้ง Mosquitto บน Windows จะทำการติดตั้งและเปิดใช้งาน **Windows Service** ชื่อ `mosquitto` ให้รันอยู่เบื้องหลังอัตโนมัติตลอดเวลา ซึ่ง Service ตัวนี้จะผูกกับ `127.0.0.1:1883` 
+> หากเปิด Terminal มารัน `mosquitto.exe -c mosquitto.conf -v` อีกตัว จะทำให้เกิด **Broker ทำงานซ้อนกัน 2 ตัวในเครื่องเดียว**:
+> * `127.0.0.1` จะวิ่งไปหา Windows Service
+> * `0.0.0.0` (IP ของบอร์ด ESP32 วงแลน เช่น `192.168.1.xxx`) จะวิ่งไปหา Terminal Mosquitto
+> ส่งผลให้อุปกรณ์ ESP32 และคำสั่ง CLI คุยกันคนละตัวและไม่ส่งข้อมูลถึงกัน!
+> 
+> **แนวทางปฏิบัติที่ถูกต้อง:** ให้เปิด PowerShell (Run as Administrator) แล้วปิด Service นี้ก่อนเสมอ:
+> ```powershell
+> Stop-Service mosquitto
+> Set-Service mosquitto -StartupType Manual
+> ```
 
 ผลลัพธ์ที่ควรเห็นใน **เทอร์มินัล Mosquitto Broker**:
 ```text
@@ -139,12 +156,12 @@ mosquitto version 2.1.2 terminating
 #### 1. การ Subscribe หัวข้อเฉพาะเจาะจง
 ใน **เทอร์มินัลที่ 2 (Subscriber)**  สั่งรันคำสั่งต่อไปนี้
 ```powershell
-& "C:\Program Files\mosquitto\mosquitto_sub.exe" -h 127.0.0.1 -p 1883 -t "home/livingroom/light" -v
+& mosquitto_sub.exe -h 127.0.0.1 -p 1883 -t "home/livingroom/light" -v
 ```
 
 เปิด **เทอร์มินัลที่ 3 (Publisher)**  ส่งข้อความสั่งงานดังนี้
 ```powershell
-& "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -p 1883 -t "home/livingroom/light" -m "ON"
+& mosquitto_pub.exe -h 127.0.0.1 -p 1883 -t "home/livingroom/light" -m "ON"
 ```
 
 *สังเกตผล*  ในเทอร์มินัลที่ 2  (Subscriber) จะได้รับข้อความ `home/livingroom/light ON`
@@ -154,14 +171,14 @@ mosquitto version 2.1.2 terminating
 #### 2. การทดสอบไวลด์การ์ดระดับเดียว (Single-Level Wildcard: `+`)
 ใน **เทอร์มินัลที่ 2 (Subscriber)**  กด `Ctrl + C` เพื่อออกจากโปรแกรม subscriber แล้วเปลี่ยนคำสั่ง Subscribe เป็น
 ```powershell
-& "C:\Program Files\mosquitto\mosquitto_sub.exe" -h 127.0.0.1 -p 1883 -t "home/+/light" -v
+& mosquitto_sub.exe -h 127.0.0.1 -p 1883 -t "home/+/light" -v
 ```
 
 ใน **เทอร์มินัลที่ 3 (Publisher)**  ทดลอง Publish ข้อความ 3 ครั้ง
 ```powershell
-& "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -p 1883 -t "home/livingroom/light" -m "ON"
-& "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -p 1883 -t "home/kitchen/light" -m "OFF"
-& "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -p 1883 -t "home/bedroom/balcony/light" -m "ON"
+& mosquitto_pub.exe -h 127.0.0.1 -p 1883 -t "home/livingroom/light" -m "ON"
+& mosquitto_pub.exe -h 127.0.0.1 -p 1883 -t "home/kitchen/light" -m "OFF"
+& mosquitto_pub.exe -h 127.0.0.1 -p 1883 -t "home/bedroom/balcony/light" -m "ON"
 ```
 
 > [!NOTE]
@@ -170,13 +187,13 @@ mosquitto version 2.1.2 terminating
 #### 3. การทดสอบไวลด์การ์ดหลายระดับ (Multi-Level Wildcard: `#`)
 ใน **เทอร์มินัลที่ 2 (Subscriber)** กด `Ctrl + C` เพื่อออกจากโปรแกรม subscriber แล้วเปลี่ยนคำสั่ง Subscribe เป็น
 ```powershell
-& "C:\Program Files\mosquitto\mosquitto_sub.exe" -h 127.0.0.1 -p 1883 -t "home/#" -v
+& mosquitto_sub.exe -h 127.0.0.1 -p 1883 -t "home/#" -v
 ```
 
 ใน **เทอร์มินัลที่ 3 (Publisher)** ทดลอง Publish ข้อความไปยังหัวข้อต่างๆ
 ```powershell
-& "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -p 1883 -t "home/livingroom/temp" -m "26.4"
-& "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -p 1883 -t "home/bedroom/balcony/light" -m "ON"
+& mosquitto_pub.exe -h 127.0.0.1 -p 1883 -t "home/livingroom/temp" -m "26.4"
+& mosquitto_pub.exe -h 127.0.0.1 -p 1883 -t "home/bedroom/balcony/light" -m "ON"
 ```
 
 *สังเกตผล* ทุกข้อความที่ขึ้นต้นด้วย `home/` จะถูกส่งมาแสดงผลทั้งหมด
@@ -201,8 +218,8 @@ mosquitto version 2.1.2 terminating
 * *สังเกต Log ฝั่ง Broker*  จะปรากฏแพ็กเก็ต `PUBLISH (d0, q1, m1, ...)` ตามด้วยแพ็กเก็ต `PUBACK (Mid: 1)` เพื่อยืนยันการรับส่งข้อมูล
 
 #### 3. ทดสอบ QoS 2 (Exactly Once)
-* ในเทอร์มินัลที่ 2 (Subscriber)  `& "C:\Program Files\mosquitto\mosquitto_sub.exe" -h 127.0.0.1 -t "test/qos" -q 2 -v`
-* ในเทอร์มินัลที่ 3 (Publisher)  `& "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -t "test/qos" -m "QoS 2 Message" -q 2`
+* ในเทอร์มินัลที่ 2 (Subscriber)  `& mosquitto_sub.exe -h 127.0.0.1 -t "test/qos" -q 2 -v`
+* ในเทอร์มินัลที่ 3 (Publisher)  `& mosquitto_pub.exe -h 127.0.0.1 -p 1883 -t "test/qos" -m "QoS 2 Message" -q 2`
 * *สังเกต Log ฝั่ง Broker*  จะปรากฏกระบวนการ 4-way Handshake อย่างชัดเจน
   1. `Received PUBLISH ... q2`
   2. `Sending PUBREC`
@@ -217,30 +234,30 @@ mosquitto version 2.1.2 terminating
 1. ปิด Subscriber ใน **เทอร์มินัลที่ 2 (Subscriber)** ทั้งหมด (ไม่มีใคร Subscribe อยู่)
 2. ใน **เทอร์มินัลที่ 3 (Publisher)** ส่งข้อความธรรมดา (ไม่ใส่พารามิเตอร์ `-r`)
    ```powershell
-   & "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -t "sensor/state" -m "Normal"
+   & mosquitto_pub.exe -h 127.0.0.1 -p 1883 -t "sensor/state" -m "Normal"
    ```
 3. เปิด Subscriber ใน **เทอร์มินัลที่ 2 (Subscriber)**
    ```powershell
-   & "C:\Program Files\mosquitto\mosquitto_sub.exe" -h 127.0.0.1 -t "sensor/state" -v
+   & mosquitto_sub.exe -h 127.0.0.1 -p 1883 -t "sensor/state" -v
    ```
    *ผลที่ได้*  หน้าจอว่างเปล่า ไม่ได้รับข้อความใดๆ เพราะข้อความถูกส่งผ่านไปแล้วก่อนหน้านี้
 
 4. ใน **เทอร์มินัลที่ 3 (Publisher)** สั่ง Publish โดยเพิ่มพารามิเตอร์ **`-r` (Retain)**
    ```powershell
-   & "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -t "sensor/state" -m "CRITICAL_ALERT" -r
+   & mosquitto_pub.exe -h 127.0.0.1 -p 1883 -t "sensor/state" -m "CRITICAL_ALERT" -r
    ```
    *ผลที่ได้* ในเทอร์มินัลที่ 2 (Subscriber)ได้รับข้อความ `sensor/state CRITICAL_ALERT` ทันที
 
 5. ปิดเทอร์มินัลที่ 2 (Subscriber) (`Ctrl + C`) แล้วรัน subscriber ใหม่อีกครั้ง
    ```powershell
-   & "C:\Program Files\mosquitto\mosquitto_sub.exe" -h 127.0.0.1 -t "sensor/state" -v
+   & mosquitto_sub.exe -h 127.0.0.1 -p 1883 -t "sensor/state" -v
    ```
    *ผลที่ได้* ทันทีที่เชื่อมต่อสำเร็จ เทอร์มินัลที่ 2 (Subscriber) จะได้รับข้อความ `CRITICAL_ALERT` ในทันที แม้ Publisher จะไม่ได้ส่งข้อความใหม่เลยก็ตาม
 
 > [!TIP]
 > **วิธีลบ Retained Message ออกจาก Broker**  ส่งข้อความที่มีเนื้อหาว่างเปล่า (Empty Payload) พร้อมเปิดแฟล็ก `-r`
 > ```powershell
-> & "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -t "sensor/state" -n -r
+> & mosquitto_pub.exe -h 127.0.0.1 -p 1883 -t "sensor/state" -n -r
 > ```
 
 ---
@@ -249,14 +266,14 @@ mosquitto version 2.1.2 terminating
 
 1. ใน **เทอร์มินัลที่ 2 (Subscriber)** เปิด Subscribe เพื่อรอเฝ้าดูสถานะของโหนด
    ```powershell
-   & "C:\Program Files\mosquitto\mosquitto_sub.exe" -h 127.0.0.1 -t "node/esp32/status" -v
+   & mosquitto_sub.exe -h 127.0.0.1 -p 1883 -t "node/esp32/status" -v
    ```
 2. ใน **เทอร์มินัลที่ 3 (Publisher)** เปิด Client ที่จำลองเป็น ESP32 โดยกำหนดค่า **LWT** ไว้ล่วงหน้า
    ```powershell
-   & "C:\Program Files\mosquitto\mosquitto_sub.exe" -h 127.0.0.1 -i "Node_Client_01" -t "dummy/listen" --will-topic "node/esp32/status" --will-payload "LOST_CONNECTION_OFFLINE" --will-qos 1
+   & mosquitto_sub.exe -h 127.0.0.1 -p 1883 -i "Node_Client_01" -t "dummy/listen" --will-topic "node/esp32/status" --will-payload "LOST_CONNECTION_OFFLINE" --will-qos 1
    ```
 3. ส่งสถานะเริ่มต้นว่า "ONLINE" จากอุปกรณ์
-   (เปิดเทอร์มินัลที่ 4 (Publisher 2) แล้วพิมพ์ `& "C:\Program Files\mosquitto\mosquitto_pub.exe" -h 127.0.0.1 -t "node/esp32/status" -m "ONLINE"`)
+   (เปิดเทอร์มินัลที่ 4 (Publisher 2) แล้วพิมพ์ `& mosquitto_pub.exe -h 127.0.0.1 -p 1883 -t "node/esp32/status" -m "ONLINE"`)
    *สังเกตผล* เทอร์มินัลที่ 2 แสดงสถานะ `ONLINE`
 
 4. **จำลองเหตุการณ์ไฟดับหรือเครือข่ายหลุดกะทันหัน**  

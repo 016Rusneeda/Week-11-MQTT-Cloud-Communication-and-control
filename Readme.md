@@ -88,36 +88,38 @@ flowchart TD
 3. **[03-MQTT-Security-and-TLS-mTLS-Infrastructure.md](03-MQTT-Security-and-TLS-mTLS-Infrastructure.md)** - โครงสร้างความปลอดภัย MQTTS, พื้นฐาน Public Key Infrastructure (PKI), การสร้างใบรับรองด้วย OpenSSL, การตั้งค่า Mosquitto TLS (พอร์ต 8883) และการฝัง Certificate บน ESP-IDF เพื่อทำ Mutual Authentication (mTLS)
 4. **[04-ESP-RainMaker-Cloud-Platform-and-Ecosystem.md](04-ESP-RainMaker-Cloud-Platform-and-Ecosystem.md)** - สถาปัตยกรรม ESP RainMaker, โครงสร้างข้อมูล Node/Device/Param/Service, กลไก Assisted Claiming, การใช้งาน RainMaker CLI และการผสานระบบสั่งงานด้วยเสียง (Alexa & Google Home)
 5. **[05-Glossary.md](05-Glossary.md)** - อภิธานศัพท์และคำย่อทางเทคนิคประจำสัปดาห์ที่ 11
-6. **[06-Labsheet-11-1-Mosquitto-Broker-and-MQTT-Fundamentals.md](06-Labsheet-11-1-Mosquitto-Broker-and-MQTT-Fundamentals.md)** - **ใบงานที่ 11.1: การติดตั้ง Mosquitto Broker และการทดสอบโปรโตคอล MQTT ด้วย CLI (Pub/Sub, QoS, Retain, LWT)**
-7. **[07-Labsheet-11-2-ESP32-MQTT-Client-Telemetry-and-Control.md](07-Labsheet-11-2-ESP32-MQTT-Client-Telemetry-and-Control.md)** - **ใบงานที่ 11.2: การพัฒนา ESP32 MQTT Client สำหรับส่งข้อมูลเซนเซอร์ Telemetry และรับคำสั่งควบคุมอุปกรณ์ระยะไกล**
-8. **[08-Labsheet-11-3-MQTTS-TLS-Mutual-Authentication-Security.md](08-Labsheet-11-3-MQTTS-TLS-Mutual-Authentication-Security.md)** - **ใบงานที่ 11.3: การสื่อสาร MQTT ความปลอดภัยสูงด้วย TLS และการยืนยันตัวตนสองทาง (mTLS) บน Mosquitto และ ESP-IDF**
-9. **[09-Labsheet-11-4-ESP-RainMaker-Cloud-IoT-and-Smart-Device.md](09-Labsheet-11-4-ESP-RainMaker-Cloud-IoT-and-Smart-Device.md)** - **ใบงานที่ 11.4: การสร้างอุปกรณ์ Smart Light สู่ระบบคลาวด์ด้วย ESP RainMaker SDK, BLE Provisioning และการควบคุมผ่านสมาร์ตโฟน**
+6. **[06-Labsheet-11-1-Mosquitto-Broker-and-MQTT-Fundamentals.md](06-Labsheet-11-1-Mosquitto-Broker-and-MQTT-Fundamentals.md)** - **ใบงานที่ 11.1 การติดตั้ง Mosquitto Broker และการทดสอบโปรโตคอล MQTT ด้วย CLI (Pub/Sub, QoS, Retain, LWT)**
+7. **[07-Labsheet-11-2-ESP32-MQTT-Client-Telemetry-and-Control.md](07-Labsheet-11-2-ESP32-MQTT-Client-Telemetry-and-Control.md)** - **ใบงานที่ 11.2 การพัฒนา ESP32 MQTT Client สำหรับส่งข้อมูลเซนเซอร์ Telemetry และรับคำสั่งควบคุมอุปกรณ์ระยะไกล**
+8. **[08-Labsheet-11-3-MQTTS-TLS-Mutual-Authentication-Security.md](08-Labsheet-11-3-MQTTS-TLS-Mutual-Authentication-Security.md)** - **ใบงานที่ 11.3 การสื่อสาร MQTT ความปลอดภัยสูงด้วย TLS และการยืนยันตัวตนสองทาง (mTLS) บน Mosquitto และ ESP-IDF**
+9. **[09-Labsheet-11-4-ESP-RainMaker-Cloud-IoT-and-Smart-Device.md](09-Labsheet-11-4-ESP-RainMaker-Cloud-IoT-and-Smart-Device.md)** - **ใบงานที่ 11.4 การสร้างอุปกรณ์ Smart Light สู่ระบบคลาวด์ด้วย ESP RainMaker SDK, BLE Provisioning และการควบคุมผ่านสมาร์ตโฟน**
+10. **[10-Appendix-1-MQTTExplorer_user_guide.md](10-Appendix-1-MQTTExplorer_user_guide.md)** - **ภาคผนวกที่ 1 คู่มือการติดตั้งและใช้งานโปรแกรม MQTT Explorer สำหรับตรวจสอบและทดสอบระบบ IoT**
+11. **[10-Appendix-2-OpenSSL-and-Keys-pair.md](10-Appendix-2-OpenSSL-and-Keys-pair.md)** - **ภาคผนวกที่ 2 พื้นฐานความปลอดภัยไซเบอร์, กลไกคู่กุญแจ (Key-Pairs) และการใช้งาน OpenSSL สำหรับ IoT**
 
 ---
 
 ## 6. เครื่องมือและอุปกรณ์ที่จำเป็น (Prerequisites)
 
-* **ฮาร์ดแวร์**:
+* **ฮาร์ดแวร์**
   * บอร์ดไมโครคอนโทรลเลอร์ **ESP32-C3** หรือ **ESP32** จำนวน 1 บอร์ด
   * สายเชื่อมต่อ USB Data Cable
   * หลอดไฟ LED พร้อมตัวต้านทาน 220Ω และตัวต้านทานปรับค่าได้ (Potentiometer) 10k
   * เบรดบอร์ดและสายต่อวงจร (Jumper Wires)
-* **ซอฟต์แวร์บนคอมพิวเตอร์**:
+* **ซอฟต์แวร์บนคอมพิวเตอร์**
   * สภาพแวดล้อม **ESP-IDF v5.x / v6.x** หรือโปรแกรม Docker Desktop พร้อมอิมเมจ `espressif/idf:release-v6.1`
   * ซอฟต์แวร์ **Eclipse Mosquitto** (พร้อมเครื่องมือ CLI: `mosquitto_sub`, `mosquitto_pub`)
   * เครื่องมือวิทยาการรหัสลับ **OpenSSL** (สำหรับสร้างกุญแจและใบรับรอง X.509)
   * สภาพแวดล้อม **Python 3.10+**
-* **แอปพลิเคชันบนสมาร์ตโฟน**:
+* **แอปพลิเคชันบนสมาร์ตโฟน**
   * แอปพลิเคชัน **ESP RainMaker** (ดาวน์โหลดได้จาก Google Play Store หรือ Apple App Store)
   * บัญชีผู้ใช้งาน ESP RainMaker (สมัครฟรีผ่านอีเมล หรือผสานกับ Google/Apple ID)
-* **โครงข่ายเครือข่าย**:
+* **โครงข่ายเครือข่าย**
   * เราเตอร์ Wi-Fi (คลื่นความถี่ 2.4 GHz) ที่เชื่อมต่ออินเทอร์เน็ตได้
 
 ---
 
-## 7. แผนภาพความเชื่อมโยงสู่บทเรียนถัดไป (Looking Ahead to Weeks 12 & 13)
+## 7. แผนภาพความเชื่อมโยงสู่บทเรียนถัดไป (Weeks 12 & 13)
 
-บทเรียนในสัปดาห์ที่ 11 นี้เป็นหมุดหมายสำคัญที่เชื่อมโยงระบบสมองกลฝังตัวเข้าสู่โลกอินเทอร์เน็ตและคลาวด์ ซึ่งจะนำไปสู่การพัฒนาที่ครอบคลุมในอีก 2 สัปดาห์สุดท้ายของภาคการศึกษา:
+บทเรียนในสัปดาห์ที่ 11 นี้เป็นหมุดหมายสำคัญที่เชื่อมโยงระบบสมองกลฝังตัวเข้าสู่โลกอินเทอร์เน็ตและคลาวด์ ซึ่งจะนำไปสู่การพัฒนาที่ครอบคลุมในอีก 2 สัปดาห์สุดท้ายของภาคการศึกษา
 
 ```mermaid
 flowchart LR
@@ -125,9 +127,9 @@ flowchart LR
     W12 --> W13["<b>สัปดาห์ที่ 13 (Grand Finale)</b><br/>The Ultimate Converged Edge Gateway<br/>(Kestrel All-in-One Protocol Bridge)"]
 ```
 
-* **[สัปดาห์ที่ 12: Cross-Platform Mobile IoT Application with Flutter](../Week-12-Flutter-Mobile-IoT-and-MQTT-Dashboard/Readme.md)**:  
+* **[สัปดาห์ที่ 12: Cross-Platform Mobile IoT Application with Flutter](../Week-12-Flutter-Mobile-IoT-and-MQTT-Dashboard/Readme.md)**  
   นักศึกษาจะได้สร้างโมบายล์แอปพลิเคชันด้วย **Flutter** เพื่อทำหน้าที่เป็น Mobile Client สำหรับเชื่อมต่อตรงเข้ากับ MQTT Broker เพื่อแสดงผลแดชบอร์ดเกจวัดและควบคุมสวิตช์ไฟจากหน้าจอมือถือจริง
-* **[สัปดาห์ที่ 13: The Ultimate Converged Edge Gateway & System Integration](../Week-13-Kestrel-Edge-Gateway-and-Protocol-Integration/Readme.md)**:  
+* **[สัปดาห์ที่ 13: The Ultimate Converged Edge Gateway & System Integration](../Week-13-Kestrel-Edge-Gateway-and-Protocol-Integration/Readme.md)**  
   นำความรู้จากสัปดาห์ที่ 8 (**Kestrel Web Server**) และสัปดาห์ที่ 11 (**MQTT Protocol**) มารวมร่างกันเป็น **"All-in-One Multi-Protocol Edge Gateway"** บน .NET 8 ตัวเดียวที่สามารถรับส่งทั้ง MQTT, REST API, WebSockets และ Serial Bridge อย่างสมบูรณ์แบบ
 
 

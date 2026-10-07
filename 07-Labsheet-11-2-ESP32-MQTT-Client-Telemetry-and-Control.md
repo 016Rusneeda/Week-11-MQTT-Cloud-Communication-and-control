@@ -18,7 +18,7 @@
 ## 2. วงจรและการต่อสายฮาร์ดแวร์ (Schematic & Wiring)
 
 <p align="center">
-<img src="Images/lab11_2_wiring.svg" width="60%">
+<img src="Images/lab11_2_wiring.svg" width="50%">
 </p>
 
 <p align="center">
@@ -34,7 +34,7 @@
 
 ---
 
-## 3. ขั้นตอนการทดลอง (Deconstructed Activities)
+## 3. ขั้นตอนการทดลอง
 
 ### กิจกรรมที่ 11-2.1 การสร้างโปรเจกต์และเพิ่มไลบรารี cJSON
 
@@ -60,22 +60,37 @@ idf.py set-target esp32
 ```
 
 *หรือใช้ Docker*
-	ดูตัวอย่างจากใบงานที่ 10
-
-#### 3. ติดตั้ง Dependency `cJSON`
-เพิ่มคอมโพเนนต์ cJSON สำหรับจัดการ JSON Payload:
-```powershell
-idf.py add-dependency "espressif/cjson"
+```
+    เปลี่ยนท้ายคำสั่ง docker จาก `idf.py create-project Lab11-2_MQTT_Client` เป็น  `idf.py set-target esp32`
 ```
 
-*หรือใช้ Docker*
-	ดูตัวอย่างจากใบงานที่ 10
+#### 3. ติดตั้ง Dependency `cJSON` และ mqtt
+เพิ่มคอมโพเนนต์ cJSON สำหรับจัดการ JSON Payload และ mqtt
+```powershell
+idf.py add-dependency "espressif/cjson"
+idf.py add-dependency "espressif/mqtt"
+```
+
+*หรือใช้ Docker* 
+```
+    เปลี่ยนท้ายคำสั่ง docker เป็น  `idf.py add-dependency "espressif/cjson"` และ `idf.py add-dependency "espressif/mqtt"`
+```
+
+
+#### 4. แก้ไข main/CMakeLists.txt 
+เพิ่ม  REQUIRES  ลงใน `main/CMakeLists.txt` 
+
+```
+idf_component_register(SRCS "Lab11-2_MQTT_Client.c"
+                    INCLUDE_DIRS "."
+                    REQUIRES mqtt cjson esp_wifi esp_event nvs_flash cjson esp_adc driver esp_driver_gpio)
+```
+
 
 ---
+### กิจกรรมที่ 11-2.2 การเขียนโค้ดโปรแกรมหลัก (`main/Lab11-2_MQTT_Client.c`)
 
-### กิจกรรมที่ 11-2.2 การเขียนโค้ดโปรแกรมหลัก (`main/main.c`)
-
-เปิดไฟล์ `main/main.c` และแทนที่ด้วยโค้ดสมบูรณ์ต่อไปนี้
+เปิดไฟล์ `main/Lab11-2_MQTT_Client.c` และแทนที่ด้วยโค้ดสมบูรณ์ต่อไปนี้
 
 ```c
 #include <stdio.h>
@@ -151,10 +166,17 @@ static void wifi_init_sta(void)
 
     wifi_config_t wifi_config = {
         .sta = {
-            .ssid = WIFI_SSID,
-            .password = WIFI_PASS,
+            .threshold.authmode = WIFI_AUTH_WPA2_PSK,
         },
     };
+    size_t ssid_len = strlen(WIFI_SSID);
+    if (ssid_len > sizeof(wifi_config.sta.ssid)) ssid_len = sizeof(wifi_config.sta.ssid);
+    memcpy(wifi_config.sta.ssid, WIFI_SSID, ssid_len);
+
+    size_t pass_len = strlen(WIFI_PASS);
+    if (pass_len > sizeof(wifi_config.sta.password)) pass_len = sizeof(wifi_config.sta.password);
+    memcpy(wifi_config.sta.password, WIFI_PASS, pass_len);
+
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_start());
@@ -329,43 +351,61 @@ idf.py -p COMx flash monitor
 *(เปลี่ยน `COMx` เป็นพอร์ตของบอร์ด ESP32 เช่น `COM3`)*
 
 *หรือใช้ Docker*
-	ดูตัวอย่างจากใบงานที่ 10
+```powershell
+python -m esptool -p <COMxx> --chip esp32 -b 460800 --before default_reset --after hard_reset write_flash --flash_mode dio --flash_size 2MB --flash_freq 40m 0x1000  build/bootloader/bootloader.bin 0x8000  build/partition_table/partition-table.bin 0x10000 build/Lab11-2_MQTT_Client.bin && idf monitor -p <COMxx>
+```
+
 
 ---
 
 ## 4. การทดสอบและการตรวจสอบผลลัพธ์ (Testing & Verification)
 
+> [!IMPORTANT] **ข้อสังเกตและแนวทางแก้ปัญหาสำคัญ (Troubleshooting Guide)**
+> 1. **ปัญหา Broker ทำงานซ้ำซ้อน (Split-Brain Broker บน Windows)**:
+>    * หากเครื่องคอมพิวเตอร์มีการติดตั้ง Mosquitto เป็น Windows Service ตัว Service ดังกล่าวจะแอบรันอยู่เบื้องหลังและผูกกับ IP `127.0.0.1` ตลอดเวลา
+>    * เมื่อท่านเปิดรัน `mosquitto.exe -c mosquitto.conf -v` ใน Terminal อีกตัว บอร์ด ESP32 จะเชื่อมต่อเข้ากับ Terminal (ผ่าน IP วงแลน `192.168.1.xxx`) ในขณะที่คำสั่ง `mosquitto_pub` ที่ส่งไปยัง `127.0.0.1` จะวิ่งไปหา Windows Service แทน ทำให้ส่งคำสั่งไม่ถึงตัวบอร์ด!
+>    * **วิธีแก้:** ให้ปิด Windows Service ก่อนเสมอด้วยคำสั่งใน PowerShell (Admin):  
+>      `Stop-Service mosquitto; Set-Service mosquitto -StartupType Manual`
+> 2. **ทำไมใน MQTT Explorer จึงแสดงเป็น QoS 0 ทั้งที่ส่งด้วย `-q 1`?**:
+>    * ตามมาตรฐาน MQTT ระดับ QoS ที่ผู้รับจะได้รับจริงถูกคำนวณจาก **`min(QoS_publish, QoS_subscribe)`**
+>    * โปรแกรม MQTT Explorer ทำการ Subscribe ทุกหัวข้อ (`#`) ด้วย **QoS 0** เป็นค่าเริ่มต้น เมื่อ Broker ได้รับข้อความระดับ QoS 1 จึงทำการลดระดับ (Downgrade) เป็น QoS 0 ส่งให้ MQTT Explorer แสดงผล
+>    * หากต้องการให้ข้อความปรากฏค้างอยู่ใน MQTT Explorer เสมอแม้ส่งเสร็จไปแล้ว ให้เพิ่มแฟล็ก **`-r` (Retain)** ในคำสั่ง Publish
+> 3. **การเปิดพอร์ต Firewall**: ตรวจสอบว่า Windows Defender Firewall อนุญาตให้พอร์ต TCP 1883 รับการเชื่อมต่อจาก Inbound LAN
+
+---
+
 ### 1. การตรวจสอบ Telemetry Data
-เปิดเทอร์มินัลบนเครื่องคอมพิวเตอร์ แล้วรันคำสั่ง
+เปิดเทอร์มินัลบนเครื่องคอมพิวเตอร์ แล้วรันคำสั่งบอกรับข้อมูล (เปลี่ยน `192.168.1.xxx` เป็น IP ของคอมพิวเตอร์ที่รัน Broker):
 ```powershell
-mosquitto_sub -h 127.0.0.1 -p 1883 -t "iot/node01/telemetry" -v
+# สามารถใช้ IP ของเครื่อง หรือ 127.0.0.1 (หากปิด Windows Service แล้ว)
+mosquitto_sub -h 192.168.1.111 -p 1883 -t "iot/node01/telemetry" -v
 ```
 **ผลลัพธ์ที่คาดหวัง**: จะได้รับ JSON ข้อมูลเซนเซอร์ทุกๆ 4 วินาที
 ```text
-iot/node01/telemetry {"node_id":"esp32-node01","adc_raw":1945,"voltage_v":1.56,"led_state":false,"uptime_ms":12480}
+iot/node01/telemetry {"node_id":"esp32-node01","adc_raw":1786,"voltage_v":1.439,"led_state":false,"uptime_ms":1910367}
 ```
 *ทดลองหมุนก้านของ Potentiometer*: สังเกตว่าค่า `adc_raw` และ `voltage_v` เปลี่ยนแปลงตามการหมุนอย่างถูกต้อง
 
 ---
 
 ### 2. การส่งคำสั่งเปิด-ปิดหลอดไฟ LED
-เปิดเทอร์มินัลอีกหน้าต่างหนึ่ง แล้วทดลองส่งคำสั่ง
+เปิดเทอร์มินัลอีกหน้าต่างหนึ่ง แล้วทดลองส่งคำสั่งสั่งงาน:
 
 * **คำสั่งเปิดไฟ**
 ```powershell
-mosquitto_pub -h 127.0.0.1 -p 1883 -t "iot/node01/cmd/led" -m "ON" -q 1
+mosquitto_pub -h 192.168.1.111 -p 1883 -t "iot/node01/cmd/led" -m "ON" -q 1
 ```
-*สังเกตผล*: หลอดไฟ LED บนบอร์ดจะติดสว่าง และบอร์ดจะส่งข้อความตอบกลับบนหัวข้อ `iot/node01/state/led` ว่า `{"led_state": true}`
+*สังเกตผล*: หลอดไฟ LED บนบอร์ดจะติดสว่างทันที และในรอบ Telemetry ถัดไป ค่า `"led_state"` จะเปลี่ยนเป็น `true`
 
 * **คำสั่งปิดไฟ**
 ```powershell
-mosquitto_pub -h 127.0.0.1 -p 1883 -t "iot/node01/cmd/led" -m "OFF" -q 1
+mosquitto_pub -h 192.168.1.111 -p 1883 -t "iot/node01/cmd/led" -m "OFF" -q 1
 ```
-*สังเกตผล*: หลอดไฟ LED จะดับลงทันที
+*สังเกตผล*: หลอดไฟ LED จะดับลงทันที และค่า `"led_state"` ใน Telemetry จะเปลี่ยนกลับเป็น `false`
 
 * **คำสั่งแบบ JSON Payload**
 ```powershell
-mosquitto_pub -h 127.0.0.1 -p 1883 -t "iot/node01/cmd/led" -m "{\"state\": 1}" -q 1
+mosquitto_pub -h 192.168.1.111 -p 1883 -t "iot/node01/cmd/led" -m "{\"state\": 1}" -q 1
 ```
 
 ---
