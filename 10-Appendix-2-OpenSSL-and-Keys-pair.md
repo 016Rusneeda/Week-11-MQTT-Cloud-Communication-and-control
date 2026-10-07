@@ -39,7 +39,7 @@
   ปัญหาใหญ่ของการเข้ารหัสลับแบบนี้คือเราต้องนำส่งกุญแจดอก A จากฝั่งผู้ส่งไปยังฝั่งผู้รับ เพื่อทำการถอดรหัส ถ้าส่งข้ามอินเทอร์เน็ตแล้วถูกดักจับ  ระบบจะพังทันที (Key Distribution Problem)
 
 <p align = "center">
-<img src="A2-Asymmetric_Cryptography-Key-Pair.svg" width ="70%"  >
+<img src="Images/A2-Asymmetric_Cryptography-Key-Pair.svg" width ="70%"  >
 </p>
 
 <p align = "center">
