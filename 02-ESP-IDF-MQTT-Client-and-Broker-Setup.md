@@ -353,21 +353,6 @@ void app_main(void)
 
 แม้ว่าในบทนี้เราจะใช้ **Eclipse Mosquitto** เป็น Broker แบบ Standalone ตามหนังสืออ้างอิง แต่ในโลกของ **Industrial IoT Edge Gateway ยุคใหม่** มีแนวคิดที่กำลังได้รับความนิยมอย่างสูง คือการรวมศูนย์บริการทั้งหมดไว้ใน **Process เดียวกัน (Single Executable)** ผ่าน **Kestrel Web Server (.NET 8)** ที่นักศึกษาได้เรียนรู้ในสัปดาห์ที่ 8
 
-```
-┌───────────────────────────────────────────────────────────────────────────────────┐
-│                    Kestrel All-in-One Edge Gateway Architecture                   │
-│                                                                                   │
-│  ESP32 (MQTT) ──────> [ Port 1883: MQTT Server (MQTTnet) ]                        │
-│                              │                                                    │
-│                              ▼ (In-Memory Bus: System.Threading.Channels)         │
-│                              │                                                    │
-│  Browser / App ◄────> [ Port 5000: Minimal API & Realtime WebSockets/SVG ]        │
-└───────────────────────────────────────────────────────────────────────────────────┘
-```
-
-
-
-
 <p align="center"> <img src="Images/Fig11.2.3.svg"></p>
 <p align="center"><b>รูปที่ 11.2.3</b> สถาปัตยกรรมKestrel ในฐานะ All-in-One Multi-Protocol Bridge</p>
 
