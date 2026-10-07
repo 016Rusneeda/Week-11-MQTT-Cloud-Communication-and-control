@@ -11,25 +11,8 @@
 2. **การควบคุมระยะไกลผ่านระบบคลาวด์ (Remote Control / Cloud Control)**  
    คือการที่อุปกรณ์หนึ่ง (เช่น สมาร์ตโฟน แท็บเล็ต หรือคอมพิวเตอร์) ควบคุมหรือรับส่งข้อมูลกับอุปกรณ์ IoT ปลายทางผ่านโครงข่ายบริเวณกว้าง (Wide Area Network - WAN หรืออินเทอร์เน็ต) โดยทลายข้อจำกัดด้านระยะทางและตำแหน่งทางภูมิศาสตร์ เช่น ผู้ใช้งานสามารถตรวจสอบอุณหภูมิห้องหรือสั่งเปิด-ปิดเครื่องปรับอากาศที่บ้านได้จากที่ทำงาน
 
-```
-+-----------------------------------------------------------------------------------+
-|                            สถาปัตยกรรม Remote Cloud Control                        |
-+-----------------------------------------------------------------------------------+
-
-     [ สมาร์ตโฟน / แอปรวมศูนย์ ]                       [ อุปกรณ์ ESP32-C3 ปลายทาง ]
-         (เครือข่ายมือถือ 4G/5G)                            (เครือข่าย Wi-Fi ภายในบ้าน)
-                 │                                                    │
-                 │ Outgoing Connection                                │ Outgoing Connection
-                 ▼                                                    ▼
-       ┌────────────────────────────────────────────────────────────────────┐
-       │                 Cloud Server / MQTT Broker (Public IP)             │
-       │               (เช่น Mosquitto, EMQX, AWS IoT Core)                 │
-       │                                                                    │
-       │    - จัดเก็บสถานะอุปกรณ์ (Device State / Shadow)                    │
-       │    - คัดกรองและกระจายข้อความตามหัวข้อ (Message Routing by Topic)   │
-       │    - รักษาความปลอดภัยและยืนยันตัวตน (Authentication & TLS)          │
-       └────────────────────────────────────────────────────────────────────┘
-```
+<p align="center"> <img src="Images/Fig01-01.svg"></p>
+<p align="center"><b>รูปที่ 11.1</b> สถาปัตยกรรม Remote Cloud Control</p>
 
 ### ทำไมระบบ Cloud Control ต้องมี Cloud Server คนกลาง
 ในเครือข่ายอินเทอร์เน็ตตามบ้าน อุปกรณ์ ESP32 จะเชื่อมต่ออยู่หลังเราเตอร์ ซึ่งทำหน้าที่แปลงแอดเดรสผ่านระบบ **NAT (Network Address Translation)** และมีระบบไฟร์วอลล์ (Firewall) ป้องกันไม่ให้อุปกรณ์ภายนอกส่งแพ็กเก็ตตรงเข้ามายัง IP วงแลนได้ หากไม่มีเซิร์ฟเวอร์คนกลาง สมาร์ตโฟนจากภายนอกจะไม่สามารถส่งคำสั่งทะลุ NAT เข้ามาหา ESP32 ได้โดยตรง
@@ -60,7 +43,7 @@ MQTT ทำงานครอบอยู่บนโพรโทคอลระ
 <p align="center">
   <img src="Images/image1.png" width="620">
 </p>
-<p align="center"><b>รูปที่ 11.1</b> สถาปัตยกรรมของโปรโตคอล MQTT (Architecture of MQTT Protocol)</p>
+<p align="center"><b>รูปที่ 11.2</b> สถาปัตยกรรมของโปรโตคอล MQTT (Architecture of MQTT Protocol)</p>
 
 ### องค์ประกอบหลัก 3 ฝ่ายในระบบ MQTT
 1. **ผู้เผยแพร่ข้อมูล (Publisher)**  
@@ -122,17 +105,11 @@ home/
 
 MQTT เป็นโปรโตคอลที่เน้นประสิทธิภาพการใช้แบนด์วิดท์ (Bandwidth-efficient) โครงสร้างแพ็กเก็ตควบคุม (Control Packet) ประกอบด้วย 3 องค์ประกอบหลัก
 
-```
-+───────────────────────────────────+─────────────────────────────────+─────────────────────────────────+
-|     Fixed Header (ส่วนหัวคงที่)    |   Variable Header (ส่วนหัวแปรผัน) |         Payload (เนื้อข้อมูล)   |
-|          (ขนาด 2 - 5 ไบต์)         |         (มีเฉพาะบางแพ็กเก็ต)     |       (มีเฉพาะบางแพ็กเก็ต)      |
-+───────────────────────────────────+─────────────────────────────────+─────────────────────────────────+
-```
 
 <p align="center">
   <img src="Images/image2.png" width="600">
 </p>
-<p align="center"><b>รูปที่ 11.2</b> โครงสร้าง Fixed Header ของแพ็กเก็ตควบคุม MQTT (Fixed Header of Control Packet)</p>
+<p align="center"><b>รูปที่ 11.3</b> โครงสร้าง Fixed Header ของแพ็กเก็ตควบคุม MQTT (Fixed Header of Control Packet)</p>
 
 ### 1. ส่วนหัวคงที่ (Fixed Header)
 ทุกแพ็กเก็ตของ MQTT จะต้องมี Fixed Header โดยมีขนาดเริ่มต้นเพียง **2 ไบต์**
@@ -189,7 +166,7 @@ Remaining Length ใช้ระบบ **7-bit Base-128 Encoding** โดยแ�
 <p align="center">
   <img src="Images/image4.png" width="450">
 </p>
-<p align="center"><b>รูปที่ 11.3</b> ลำดับการส่งแพ็กเก็ตของ MQTT QoS 0 (Flow of MQTT QoS 0)</p>
+<p align="center"><b>รูปที่ 11.4</b> ลำดับการส่งแพ็กเก็ตของ MQTT QoS 0 (Flow of MQTT QoS 0)</p>
 
 ### 2. QoS 1 -- At least once delivery ("ส่งถึงผู้รับอย่างน้อยหนึ่งครั้ง")
 * ผู้ส่งจะแนบหมายเลขแพ็กเก็ต **Packet Identifier (Packet ID)** ไปกับแพ็กเก็ต `PUBLISH`
@@ -201,7 +178,7 @@ Remaining Length ใช้ระบบ **7-bit Base-128 Encoding** โดยแ�
 <p align="center">
   <img src="Images/image5.png" width="480">
 </p>
-<p align="center"><b>รูปที่ 11.4</b> ลำดับการส่งแพ็กเก็ตของ MQTT QoS 1 (Flow of MQTT QoS 1)</p>
+<p align="center"><b>รูปที่ 11.5</b> ลำดับการส่งแพ็กเก็ตของ MQTT QoS 1 (Flow of MQTT QoS 1)</p>
 
 ### 3. QoS 2 -- Exactly once delivery ("ส่งถึงผู้รับครั้งเดียวแน่นอน ไม่ขาดและไม่เกิน")
 * เป็นระดับความปลอดภัยสูงสุด ใช้กระบวนการตรวจสอบแบบ 4 ขั้นตอน (Four-step Handshake)
@@ -216,7 +193,7 @@ Remaining Length ใช้ระบบ **7-bit Base-128 Encoding** โดยแ�
 <p align="center">
   <img src="Images/image6.png" width="500">
 </p>
-<p align="center"><b>รูปที่ 11.5</b> ลำดับการส่งแพ็กเก็ตของ MQTT QoS 2 (Flow of MQTT QoS 2)</p>
+<p align="center"><b>รูปที่ 11.6</b> ลำดับการส่งแพ็กเก็ตของ MQTT QoS 2 (Flow of MQTT QoS 2)</p>
 
 ---
 
@@ -242,16 +219,9 @@ Remaining Length ใช้ระบบ **7-bit Base-128 Encoding** โดยแ�
 * หาก Broker ตรวจพบว่าไคลเอนต์หลุดการเชื่อมต่ออย่างผิดปกติ (Abnormal Disconnect หรือ Keep-Alive ขาดหาย) **Broker จะเป็นผู้ Publish ข้อความ LWT นี้ไปยังหัวข้อที่ระบุให้โดยอัตโนมัติ**
 * ทำให้ผู้ใช้งานในแอปพลิเคชันหรือ Dashboard ทราบทันทีว่าอุปกรณ์ออฟไลน์ไปแล้ว
 
-```
-[ Client ESP32 ]                          [ Broker ]                         [ Dashboard App ]
-       │                                      │                                      │
-       │── CONNECT (Will: device/status="offline") ──>                                │
-       │                                      │                                      │
-       │  (ESP32 ถูกถอดปลั๊กกะทันหัน)          │                                      │
-       X                                      │ (Keep-Alive ขาดหาย)                  │
-                                              │── PUBLISH ("device/status", "offline") ──>
-                                              │                                      │ (แสดงผล: DISCONNECTED)
-```
+
+<p align="center"> <img src="Images/Fig11.7-LWT.svg"></p>
+<p align="center"><b>รูปที่ 11.7</b> พินัยกรรมฉุกเฉิน</p>
 
 ---
 
