@@ -15,7 +15,7 @@
 
 ### องค์ประกอบหลัก 4 ส่วนของ ESP RainMaker
 1. **Device Firmware (ESP-IDF + RainMaker SDK)**  
-   เฟิร์มแวร์ที่ทำงานบนชิป ESP32/ESP32-C3 ทำหน้าที่ควบคุมฮาร์ดแวร์ จัดการ Wi-Fi Provisioning ผ่าน BLE และสื่อสารกับคลาวด์ผ่าน MQTTS
+   เฟิร์มแวร์ที่ทำงานบนชิป ESP32 ทำหน้าที่ควบคุมฮาร์ดแวร์ จัดการ Wi-Fi Provisioning ผ่าน BLE และสื่อสารกับคลาวด์ผ่าน MQTTS
 2. **Cloud Backend (Serverless Architecture on AWS)**  
    ระบบคลาวด์เบื้องหลังสร้างขึ้นบนโครงสร้างพื้นฐานระดับโลกของ **Amazon Web Services (AWS)** โดยใช้ AWS IoT Core เป็นตัวกลางกระจายข้อความ MQTT, AWS Cognito จัดการระบบสมาชิก, AWS DynamoDB เก็บฐานข้อมูล และ AWS Lambda จัดการตรรกะแบบ Serverless
 3. **Phone Application (ESP RainMaker Mobile App)**  

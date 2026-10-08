@@ -8,6 +8,7 @@
 
 <p align="center"> <img src="Images/Fig11.2.1.svg"></p>
 <p align="center"><b>รูปที่ 11.2.1</b> องค์ประกอบของระบบในการทดลอง</p>
+
 ---
 
 ### 1. การติดตั้งบนระบบปฏิบัติการ Linux (Ubuntu / Debian / Raspberry Pi OS)
