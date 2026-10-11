@@ -1,8 +1,8 @@
-# 11.1 สถาปัตยกรรม Cloud Control และโปรโตคอล MQTT พื้นฐาน (Cloud Control & MQTT Architecture)
+# 11.1 สถาปัตยกรรม Cloud Control และโปรโตคอล MQTT พื้นฐาน
 
 ---
 
-## 11.1.1 บทนำสู่การควบคุมระยะไกล (Introduction to Remote Control)
+## 11.1.1 บทนำ
 
 ในการพัฒนาอุปกรณ์ Internet of Things (IoT) การควบคุมและตรวจสอบสถานะการทำงานสามารถแบ่งออกเป็น 2 รูปแบบหลักตามขอบเขตของระบบเครือข่าย:
 
